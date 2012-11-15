@@ -21,4 +21,3 @@ if __name__ == "__main__" :
 	''' run classifier on phone '''
 	sim_phone.run_classifier(classifier)
 	''' print statistics '''
-   	
