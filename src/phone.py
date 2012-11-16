@@ -33,6 +33,13 @@ class Phone :
 	gsm_current_index=0
 	nwk_loc_current_index=0
 
+	''' next sensor timestamp for downsampling '''
+	next_accel_timestamp=-1
+	next_wifi_timestamp=-1
+	next_gps_timestamp=-1
+	next_gsm_timestamp=-1
+	next_nwk_loc_timestamp=-1
+
 	def __init__ (self,accel_trace,wifi_trace,gps_trace,gsm_trace,nwk_loc_trace) :
 		''' Populate trace file names '''
 		self.accel_trace=accel_trace
@@ -49,18 +56,29 @@ class Phone :
 		''' TODO: Fix invalid timestamps '''
 		self.event_list=self.accel_list+self.wifi_list+self.gps_list+self.gsm_list+self.nwk_loc_list;
 		self.event_list.sort(key=lambda x : x.time_stamp) # sort the whole list once 
+		''' Populate next timestamps '''
+		self.next_accel_timestamp=self.accel_list[0].time_stamp
+		self.next_wifi_timestamp=self.wifi_list[0].time_stamp
+		self.next_gps_timestamp=self.gps_list[0].time_stamp
+		self.next_gsm_timestamp=self.gsm_list[0].time_stamp
+		self.next_nwk_loc_timestamp=self.nwk_loc_list[0].time_stamp
 
 	''' Methods to change sampling interval '''
 	def change_accel_interval(self,accel_interval):
 		self.accel_interval=accel_interval
+		self.next_accel_timestamp=self.current_time
 	def change_wifi_interval(self,wifi_interval):
 		self.wifi_interval=wifi_interval
+		self.next_wifi_timestamp=self.current_time
 	def change_gps_interval(self,gps_interval):
 		self.gps_interval=gps_interval
+		self.next_gps_timestamp=current_time
 	def change_gsm_interval(self,gsm_interval):
 		self.gsm_interval=gsm_interval
+		self.next_gsm_timestamp=current_time
 	def change_nwk_loc_interval(self,nwk_loc_interval) :
 		self.nwk_loc_interval=nwk_loc_interval
+		self.next_nwk_loc_timestamp=current_time
 
 	''' File handling routines '''
 	def read_accel_trace (self) :
@@ -128,7 +146,32 @@ class Phone :
 		# main event loop of trace driven simulation
 		while (self.event_list != [] ) :
 			current_event=self.event_list.pop(0)
-			''' call back classifier '''
-			classifier.callback(current_event,current_event.time_stamp,type(current_event))	
-			''' update current time now '''
-			print "Current time is ",current_event.time_stamp, " reading is ",current_event
+			result=self.subsample(current_event);
+			if (result) :
+				''' call back classifier '''
+				classifier.callback(current_event,current_event.time_stamp,type(current_event))	
+				''' update current time now '''
+				self.current_time=current_event.time_stamp;
+				print "Current time is ",current_event.time_stamp, " reading is ",current_event
+
+	def subsample (self,event) :
+		if (isinstance(event,Accel)) :
+			if (event.time_stamp >= self.next_accel_timestamp):
+				self.next_accel_timestamp+=self.accel_interval;
+				return True
+		if (isinstance(event,WiFi)) :
+			if (event.time_stamp >= self.next_wifi_timestamp):
+				self.next_wifi_timestamp+=self.wifi_interval;
+				return True
+		if (isinstance(event,GPS)) :
+			if (event.time_stamp >= self.next_gps_timestamp):
+				self.next_gps_timestamp+=self.gps_interval;
+				return True
+		if (isinstance(event,GSM)) :
+			if (event.time_stamp >= self.next_gsm_timestamp):
+				self.next_gsm_timestamp+=self.gsm_interval;
+				return True
+		if (isinstance(event,NwkLoc)) :
+			if (event.time_stamp >= self.next_accel_timestamp):
+				self.next_nwk_loc_timestamp+=self.nwk_loc_interval;
+				return True
