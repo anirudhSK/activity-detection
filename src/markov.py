@@ -5,8 +5,8 @@ from math import *
 class MarkovChain :
 	states=[] 		# list of states id'ed by name
 	transition_rates=[] 	# list of lists with transition rates per second
-	def __init__ (self) :
-		seed(2)	
+	def __init__ (self,num) :
+		seed(num)	
 		self.states=['static','walking','running','biking','driving']
 		for i in range(0,len(self.states)) :
 			self.transition_rates.append([])
@@ -16,7 +16,7 @@ class MarkovChain :
 		time=0;
 		''' initially, pick state with a uniform prior '''
 		state = min(int(random() * 5),5)
-		sampled_dtmc=[(0,state)]
+		sampled_dtmc=[]
 		while ( time < duration ) :
 			''' generate next state using all possible jumps from here '''
 			sampled_dtmc+=[(time,state)]

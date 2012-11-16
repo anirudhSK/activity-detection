@@ -3,11 +3,11 @@
 from sensors import *
 class Phone :
 	''' sampling interval defaults '''
-	accel_interval=1
-	wifi_interval=1
-	gps_interval=1
-	gsm_interval=1
-	nwk_loc_interval=1
+	accel_interval=1.0
+	wifi_interval=1.0
+	gps_interval=1.0
+	gsm_interval=1.0
+	nwk_loc_interval=1.0
 	
 	''' current time on trace '''
 	current_time=0
@@ -40,6 +40,13 @@ class Phone :
 	next_gsm_timestamp=-1
 	next_nwk_loc_timestamp=-1
 
+	''' sampling rate vectors for sensors '''
+	accel_rate=[]
+	wifi_rate=[]
+	gps_rate=[]
+	gsm_rate=[]
+	nwk_loc_rate=[]
+
 	def __init__ (self,accel_trace,wifi_trace,gps_trace,gsm_trace,nwk_loc_trace) :
 		''' Populate trace file names '''
 		self.accel_trace=accel_trace
@@ -56,29 +63,42 @@ class Phone :
 		''' TODO: Fix invalid timestamps '''
 		self.event_list=self.accel_list+self.wifi_list+self.gps_list+self.gsm_list+self.nwk_loc_list;
 		self.event_list.sort(key=lambda x : x.time_stamp) # sort the whole list once 
+		self.current_time=self.event_list[0].time_stamp
 		''' Populate next timestamps '''
 		self.next_accel_timestamp=self.accel_list[0].time_stamp
 		self.next_wifi_timestamp=self.wifi_list[0].time_stamp
 		self.next_gps_timestamp=self.gps_list[0].time_stamp
 		self.next_gsm_timestamp=self.gsm_list[0].time_stamp
 		self.next_nwk_loc_timestamp=self.nwk_loc_list[0].time_stamp
+		''' Write into sampling rate vectors '''
+		self.accel_rate.append((self.current_time,1/self.accel_interval));
+		self.wifi_rate.append((self.current_time,1/self.wifi_interval));
+		self.gps_rate.append((self.current_time,1/self.gps_interval));
+		self.gsm_rate.append((self.current_time,1/self.gsm_interval));
+		self.nwk_loc_rate.append((self.current_time,1/self.nwk_loc_interval));
 
 	''' Methods to change sampling interval '''
 	def change_accel_interval(self,accel_interval):
 		self.accel_interval=accel_interval
 		self.next_accel_timestamp=self.current_time
+		self.accel_rate.append((self.current_time,1/self.accel_interval));
 	def change_wifi_interval(self,wifi_interval):
 		self.wifi_interval=wifi_interval
 		self.next_wifi_timestamp=self.current_time
+		self.wifi_rate.append((self.current_time,1/self.wifi_interval));		
 	def change_gps_interval(self,gps_interval):
 		self.gps_interval=gps_interval
 		self.next_gps_timestamp=current_time
+		self.gps_rate.append((self.current_time,1/self.gps_interval));
 	def change_gsm_interval(self,gsm_interval):
 		self.gsm_interval=gsm_interval
 		self.next_gsm_timestamp=current_time
+		self.gsm_rate.append((self.current_time,1/self.gsm_interval));
 	def change_nwk_loc_interval(self,nwk_loc_interval) :
 		self.nwk_loc_interval=nwk_loc_interval
 		self.next_nwk_loc_timestamp=current_time
+		self.nwk_loc_rate.append((self.current_time,1/self.nwk_loc_interval));
+
 
 	''' File handling routines '''
 	def read_accel_trace (self) :
