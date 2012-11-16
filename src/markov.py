@@ -16,9 +16,10 @@ class MarkovChain :
 		time=0;
 		''' initially, pick state with a uniform prior '''
 		state = min(int(random() * 5),5)
+		sampled_dtmc=[(0,state)]
 		while ( time < duration ) :
-			print time,"\t",self.states[state]
 			''' generate next state using all possible jumps from here '''
+			sampled_dtmc+=[(time,state)]
 			min_time=-1
 			for j in range(0,len(self.states)):
 				transition_time=self.sample_exp(self.transition_rates[state][j])
@@ -30,6 +31,6 @@ class MarkovChain :
 					target_state=j		
 			state=target_state
 			time=time+min_time
-		
+		return sampled_dtmc	
 	def sample_exp(self,rate) :
 		return -log(random())/rate;	
