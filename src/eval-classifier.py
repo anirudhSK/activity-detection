@@ -5,6 +5,7 @@
 import sys
 from classify import *
 from phone import *
+from stats import *
 if __name__ == "__main__" :
 	if ( len(sys.argv) < 6 ) :
 		print "Usage: ",sys.argv[0]," accel-trace wifi-trace gps-trace gsm-trace nwk-loc-trace "
@@ -21,3 +22,4 @@ if __name__ == "__main__" :
 	''' run classifier on phone '''
 	sim_phone.run_classifier(classifier)
 	''' print statistics '''
+	statistics=Stats([],[])	
