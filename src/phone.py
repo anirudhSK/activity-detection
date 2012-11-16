@@ -12,6 +12,9 @@ class Phone :
 	''' current time on trace '''
 	current_time=0
 
+	''' gnd truth list '''
+	gnd_truth=[]
+
 	''' trace file names '''
 	accel_trace=""
 	wifi_trace=""
@@ -106,7 +109,8 @@ class Phone :
 		for line in fh.readlines() :
 			records=line.split(',')
 			time_stamp=float(records[1])/1000.0
-			accel_reading=Accel(float(records[3].split('|')[0]),float(records[3].split('|')[1]),float(records[3].split('|')[2]),time_stamp)
+			gnd_truth=int(records[3].split('|')[3])
+			accel_reading=Accel(float(records[3].split('|')[0]),float(records[3].split('|')[1]),float(records[3].split('|')[2]),time_stamp,gnd_truth)
 			self.accel_list+=[accel_reading]
 			
 	def read_wifi_trace (self) :
@@ -114,6 +118,7 @@ class Phone :
 		for line in fh.readlines() :
 			records=line.split(',')
 			time_stamp=float(records[1])/1000.0
+			gnd_truth=int(records[3].split('|')[5])
 			wifi_scan_data=records[3]
 			''' determine number of APs '''
 			num_aps=int(wifi_scan_data.split('|')[4])
@@ -125,14 +130,15 @@ class Phone :
 				bss_list+=[next_ap_data[1]];
 				rssi_list+=[int(next_ap_data[2])];
 			assert(len(bss_list)==len(rssi_list))	
-			self.wifi_list+=[WiFi(bss_list,rssi_list,time_stamp)]
+			self.wifi_list+=[WiFi(bss_list,rssi_list,time_stamp,gnd_truth)]
 			
 	def read_gps_trace (self) :
 		fh=open(self.gps_trace,"r");
 		for line in fh.readlines() :
 			records=line.split(',')
 			time_stamp=float(records[1])/1000.0
-			gps_reading=GPS(float(records[3].split('|')[2]),float(records[3].split('|')[2]),time_stamp)
+			gnd_truth=int(records[3].split('|')[8])
+			gps_reading=GPS(float(records[3].split('|')[2]),float(records[3].split('|')[3]),time_stamp,gnd_truth)
 			self.gps_list+=[gps_reading]
 
 	def read_gsm_trace (self) :
@@ -140,6 +146,7 @@ class Phone :
 		for line in fh.readlines() :
 			records=line.split(',')
 			time_stamp=float(records[1])/1000.0
+			gnd_truth=int(records[3].split('|')[5])
 			gsm_scan_data=records[3]
 			''' determine number of Base Stations '''
 			num_bs=int(gsm_scan_data.split('|')[6])
@@ -151,7 +158,7 @@ class Phone :
 				bs_list+=[next_bs_data[0]];
 				rssi_list+=[int(next_bs_data[2])];
 			assert(len(bs_list)==len(rssi_list))	
-			self.gsm_list+=[GSM(bs_list,rssi_list,time_stamp)]
+			self.gsm_list+=[GSM(bs_list,rssi_list,time_stamp,gnd_truth)]
 		''' TODO Data format changed before and after May 2012 '''
 
 	def read_nwk_loc_trace (self) :
@@ -159,7 +166,8 @@ class Phone :
 		for line in fh.readlines() :
 			records=line.split(',')
 			time_stamp=float(records[1])/1000.0
-			nwk_loc_reading=NwkLoc(float(records[3].split('|')[2]),float(records[3].split('|')[2]),time_stamp)
+			gnd_truth=int(records[3].split('|')[8])
+			nwk_loc_reading=NwkLoc(float(records[3].split('|')[2]),float(records[3].split('|')[3]),time_stamp,gnd_truth)
 			self.nwk_loc_list+=[nwk_loc_reading]
 
 	def run_classifier(self,classifier) :
@@ -167,6 +175,7 @@ class Phone :
 		while (self.event_list != [] ) :
 			current_event=self.event_list.pop(0)
 			result=self.subsample(current_event);
+			self.gnd_truth+=(current_event.time_stamp,current_event.gnd_truth);
 			if (result) :
 				''' call back classifier '''
 				classifier.callback(current_event,current_event.time_stamp,type(current_event))	
@@ -174,6 +183,7 @@ class Phone :
 				self.current_time=current_event.time_stamp;
 				print "Current time is ",current_event.time_stamp, " reading is ",current_event
 		self.cleanup()
+		return (self.accel_rate,self.wifi_rate,self.gps_rate,self.gsm_rate,self.nwk_loc_rate)
 
 	def cleanup(self) :
 		''' clean up simulator and return output '''

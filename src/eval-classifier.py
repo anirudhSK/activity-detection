@@ -20,6 +20,6 @@ if __name__ == "__main__" :
 	''' Initialize classifier object '''
 	classifier=Classify(sim_phone)
 	''' run classifier on phone '''
-	sim_phone.run_classifier(classifier)
+	sampling_rate_vector=sim_phone.run_classifier(classifier)
 	''' print statistics '''
-	statistics=Stats([],classifier.classifier_output,[])	
+	statistics=Stats(sim_phone.gnd_truth,classifier.classifier_output,sampling_rate_vector)	
