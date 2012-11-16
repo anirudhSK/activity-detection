@@ -47,7 +47,8 @@ class Phone :
 		self.read_gsm_trace()
 		self.read_nwk_loc_trace()
 		''' TODO: Fix invalid timestamps '''
-		self.update_current_time()
+		self.event_list=self.accel_list+self.wifi_list+self.gps_list+self.gsm_list+self.nwk_loc_list;
+		self.event_list.sort(key=lambda x : x.time_stamp) # sort the whole list once 
 
 	''' Methods to change sampling interval '''
 	def change_accel_interval(self,accel_interval):
@@ -131,6 +132,3 @@ class Phone :
 			classifier.callback(current_event,current_event.time_stamp,type(current_event))	
 			''' update current time now '''
 			print "Current time is ",current_event.time_stamp, " reading is ",current_event
-	def update_current_time(self) :
-		self.event_list=self.accel_list+self.wifi_list+self.gps_list+self.gsm_list+self.nwk_loc_list;
-		self.event_list.sort(key=lambda x : x.time_stamp) # sort the whole list once 
