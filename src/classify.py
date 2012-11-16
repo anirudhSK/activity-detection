@@ -3,5 +3,7 @@
 class Classify :
 	def __init__(self,sim_phone) :
 		self.sim_phone=sim_phone
+		self.classifier_output=[]
 	def callback(self,sensor_reading,current_time,reading_type) :
 		a=5; # TODO
+		''' Interface to simulator :  Leave final result as (timestamp,gnd_truth) pairs in classifier_output '''

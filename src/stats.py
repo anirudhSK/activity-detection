@@ -5,6 +5,13 @@ class Stats :
 	gnd_truth=[]		# list of time, gnd_truth pairs
 	classifier_output=[]	# list of time, classifier output pairs
 	sampling_rates=()# 5 tuple of lists each representing one sensor's rate as a fn of time
+	
+	''' power stats for each phone '''
+	power_accel=0
+	power_wifi=0
+	power_gps=0
+	power_gsm=0
+	power_nwk_loc=0
 	def __init__ (self,gnd_truth,classifier_output,sensor_sampling_rates) :
 		self.gnd_truth=gnd_truth
 		self.classifier_output=classifier_output
@@ -29,7 +36,23 @@ class Stats :
 	def latency_stats(self):# compute latency of detection
 		return [] 	# TODO
 	def energy_stats(self): # compute energy cost of detection over the entire trace
-		return -1 	# TODO	
+		accel_rate=sampling_rates[0]
+		wifi_rate=sampling_rates[1]
+		gps_rate=sampling_rates[2]
+		gsm_rate=sampling_rates[3]
+		nwk_loc_rate=sampling_rates[4]
+		energy=0
+		for i in range(0,len(accel_rate)-1) :
+			energy=energy+power_accel*accel_rate[i][1]*(accel_rate[i+1][0]-accel_rate[i][0])
+		for i in range(0,len(wifi_rate)-1) :
+			energy=energy+power_wifi*wifi_rate[i][1]*(wifi_rate[i+1][0]-wifi_rate[i][0])
+		for i in range(0,len(gps_rate)-1) :
+			energy=energy+power_gps*gps_rate[i][1]*(gps_rate[i+1][0]-gps_rate[i][0])
+		for i in range(0,len(gsm_rate)-1) :
+			energy=energy+power_gsm*gsm_rate[i][1]*(gsm_rate[i+1][0]-gsm_rate[i][0])
+		for i in range(0,len(accel_rate)-1) :
+			energy=energy+power_nwk_loc*nwk_loc_rate[i][1]*(nwk_loc_rate[i+1][0]-nwk_loc_rate[i][0])
+		return energy	
 	def interval_list(self,time_series) :
 		''' Compute a range-list that says time 1 to time 2 activity 1, and so on '''
 		last_time_stamp=time_series[0][0]

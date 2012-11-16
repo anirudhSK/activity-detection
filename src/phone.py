@@ -173,6 +173,15 @@ class Phone :
 				''' update current time now '''
 				self.current_time=current_event.time_stamp;
 				print "Current time is ",current_event.time_stamp, " reading is ",current_event
+		self.cleanup()
+
+	def cleanup(self) :
+		''' clean up simulator and return output '''
+		self.accel_rate.append((self.current_time,1/self.accel_interval));
+		self.wifi_rate.append((self.current_time,1/self.wifi_interval));		
+		self.gps_rate.append((self.current_time,1/self.gps_interval));
+		self.gsm_rate.append((self.current_time,1/self.gsm_interval));
+		self.nwk_loc_rate.append((self.current_time,1/self.nwk_loc_interval));
 
 	def subsample (self,event) :
 		if (isinstance(event,Accel)) :

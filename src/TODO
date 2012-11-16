@@ -1,6 +1,5 @@
 1. Handle timestamps not being in order due to non-monotonic clock.
 2. When using stitch-traces.py, make sure that the entire trace file has a single ground truth or prune if it's not that way. I guess we could just do this manually and create a bunch of really clean trace files.
 3. Write the latency calculation code.
-4. Write the energy cost calculation code.
-5. Write the training code for the classifier.
-6. Make classifier and simulator spit out the ground truth.
+4. Write the training code for the classifier.
+5. Make classifier and simulator spit out the ground truth.
