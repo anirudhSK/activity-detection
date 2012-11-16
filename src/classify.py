@@ -6,4 +6,4 @@ class Classify :
 		self.classifier_output=[]
 	def callback(self,sensor_reading,current_time,reading_type) :
 		a=5; # TODO
-		''' Interface to simulator :  Leave final result as (timestamp,gnd_truth) pairs in classifier_output '''
+		''' Interface to simulator :  Leave final result as (timestamp,output_state) pairs in classifier_output '''

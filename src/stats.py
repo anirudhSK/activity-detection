@@ -22,14 +22,15 @@ class Stats :
 		classifier_output_list=self.interval_list(self.classifier_output)
 		correct_match_time=0
 		incorrect_match_time=0
-		print gnd_truth_list
 		for gnd_truth_interval in gnd_truth_list :
 			classifier_filtered=filter(lambda x : not ((x.start >= gnd_truth_interval.end) or (x.end <= gnd_truth_interval.start)), classifier_output_list)
 			for output_interval in classifier_filtered :
+				overlap=output_interval.get_overlap(gnd_truth_interval)
+				assert(overlap>=0)
 				if (output_interval.gnd_truth==gnd_truth_interval.gnd_truth) :
-					correct_match_time+=output_interval.get_overlap(gnd_truth_interval)
+					correct_match_time+=overlap
 				else :
-					incorrect_match_time+=output_interval.get_overlap(gnd_truth_interval)		
+					incorrect_match_time+=overlap
 		return float(correct_match_time) / ( correct_match_time + incorrect_match_time )
 	def soft_match(self):	# compute soft path metric between the two lists
 		return 0 	# TODO

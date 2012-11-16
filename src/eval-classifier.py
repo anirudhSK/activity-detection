@@ -1,6 +1,6 @@
 #! /usr/bin/python 
 ''' Framework to evaluate classifiers on user generated traces.
-    Allows you to create traces of arbitrary length to test the classifier.
+    Use traces of arbitrary length to test the classifier.
 '''
 import sys
 from classify import *

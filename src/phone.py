@@ -29,14 +29,7 @@ class Phone :
 	gsm_list=[]
 	nwk_loc_list=[]
 
-	''' current index in list '''
-	accel_current_index=0
-	wifi_current_index=0
-	gps_current_index=0
-	gsm_current_index=0
-	nwk_loc_current_index=0
-
-	''' next sensor timestamp for downsampling '''
+	''' next sensor timestamp (for downsampling) '''
 	next_accel_timestamp=-1
 	next_wifi_timestamp=-1
 	next_gps_timestamp=-1
@@ -63,9 +56,9 @@ class Phone :
 		self.read_gps_trace()
 		self.read_gsm_trace()
 		self.read_nwk_loc_trace()
-		''' TODO: Fix invalid timestamps '''
+		''' Sort event list using timestamp as key;TODO: Fix invalid timestamps '''
 		self.event_list=self.accel_list+self.wifi_list+self.gps_list+self.gsm_list+self.nwk_loc_list;
-		self.event_list.sort(key=lambda x : x.time_stamp) # sort the whole list once 
+		self.event_list.sort(key=lambda x : x.time_stamp) 
 		self.current_time=self.event_list[0].time_stamp
 		''' Populate next timestamps '''
 		self.next_accel_timestamp=self.accel_list[0].time_stamp
@@ -159,7 +152,7 @@ class Phone :
 				rssi_list+=[int(next_bs_data[2])];
 			assert(len(bs_list)==len(rssi_list))	
 			self.gsm_list+=[GSM(bs_list,rssi_list,time_stamp,gnd_truth)]
-		''' TODO Data format changed before and after May 2012 '''
+	''' TODO Data format changed before May 2012. Now, the after May 2012 format is implemented '''
 
 	def read_nwk_loc_trace (self) :
 		fh=open(self.nwk_loc_trace,"r");
