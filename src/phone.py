@@ -84,15 +84,15 @@ class Phone(object) :
 		self.wifi_rate.append((self.current_time,1/self.wifi_interval));		
 	def change_gps_interval(self,gps_interval):
 		self.gps_interval=gps_interval
-		self.next_gps_timestamp=current_time
+		self.next_gps_timestamp=self.current_time
 		self.gps_rate.append((self.current_time,1/self.gps_interval));
 	def change_gsm_interval(self,gsm_interval):
 		self.gsm_interval=gsm_interval
-		self.next_gsm_timestamp=current_time
+		self.next_gsm_timestamp=self.current_time
 		self.gsm_rate.append((self.current_time,1/self.gsm_interval));
 	def change_nwk_loc_interval(self,nwk_loc_interval) :
 		self.nwk_loc_interval=nwk_loc_interval
-		self.next_nwk_loc_timestamp=current_time
+		self.next_nwk_loc_timestamp=self.current_time
 		self.nwk_loc_rate.append((self.current_time,1/self.nwk_loc_interval));
 
 
