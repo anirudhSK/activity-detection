@@ -1,6 +1,6 @@
 #! /usr/bin/python
 # represent an interval
-class Interval :	# Represents a closed Interval on the time axis with a gnd truth
+class Interval(object) :	# Represents a closed Interval on the time axis with a gnd truth
 	start=0
 	end=0
 	gnd_truth=-1

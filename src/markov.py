@@ -2,7 +2,7 @@
 ''' Continuous time Markov Chain to simulate state transitions '''
 from random import *
 from math import *
-class MarkovChain :
+class MarkovChain(object) :
 	states=[] 		# list of states id'ed by name
 	transition_rates=[] 	# list of lists with transition rates per second
 	def __init__ (self,num) :

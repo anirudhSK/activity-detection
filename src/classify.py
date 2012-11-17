@@ -1,6 +1,6 @@
 #! /usr/bin/python
 # classify based on traces
-class Classify :
+class Classify(object) :
 	def __init__(self,sim_phone) :
 		self.sim_phone=sim_phone
 		self.classifier_output=[]

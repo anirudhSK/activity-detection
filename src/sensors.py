@@ -1,5 +1,5 @@
 #! /usr/bin/python
-class Accel :
+class Accel(object) :
 	time_stamp=0
 	gnd_truth=-1
 	accel_x=0
@@ -14,7 +14,7 @@ class Accel :
 	def __str__(self) :
 		return "Accel: "+str(self.time_stamp)+"\t"+str(self.gnd_truth)+"\t"+str(self.accel_x)+"\t"+str(self.accel_y)+"\t"+str(self.accel_z)
 
-class WiFi :
+class WiFi(object) :
 	ap_list=[]
 	rssi_list=[]
 	time_stamp=0
@@ -28,7 +28,7 @@ class WiFi :
 	def __str__(self) :
 		return "WiFi: "+str(self.time_stamp)+"\t"+str(self.gnd_truth)+"\t"+str(self.ap_list)+"\t"+str(self.rssi_list)
 
-class GPS :
+class GPS(object) :
 	lat=0
 	lon=0
 	time_stamp=0
@@ -41,7 +41,7 @@ class GPS :
 	def __str__(self) :
 		return "GPS: "+str(self.time_stamp)+"\t"+str(self.gnd_truth)+"\t"+str(self.lat)+"\t"+str(self.lon)
 
-class GSM :
+class GSM(object) :
 	cell_tower_list=[]
 	rssi_list=[]
 	time_stamp=0
@@ -55,7 +55,7 @@ class GSM :
 	def __str__(self) :
 		return "GSM: "+str(self.time_stamp)+"\t"+str(self.gnd_truth)+"\t"+str(self.cell_tower_list)+"\t"+str(self.rssi_list)
 
-class NwkLoc :
+class NwkLoc(object) :
 	lat=0
 	lon=0
 	time_stamp=0

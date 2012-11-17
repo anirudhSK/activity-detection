@@ -1,6 +1,6 @@
 #! /usr/bin/python
 ''' Class that represents a trace file '''
-class Trace :
+class Trace(object) :
 	trace_file=""
 	start_time=-1;
 	end_time=-1;

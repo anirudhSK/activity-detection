@@ -1,7 +1,7 @@
 #! /usr/bin/python
 # generate classification stats
 from interval import *
-class Stats :
+class Stats(object) :
 	gnd_truth=[]		# list of time, gnd_truth pairs
 	classifier_output=[]	# list of time, classifier output pairs
 	sampling_rates=()# 5 tuple of lists each representing one sensor's rate as a fn of time

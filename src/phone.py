@@ -1,7 +1,7 @@
 #! /usr/bin/python
 # class representing phone
 from sensors import *
-class Phone :
+class Phone(object) :
 	''' sampling interval defaults '''
 	accel_interval=1.0
 	wifi_interval=1.0
