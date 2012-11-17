@@ -168,7 +168,7 @@ class Phone(object) :
 		while (self.event_list != [] ) :
 			current_event=self.event_list.pop(0)
 			result=self.subsample(current_event);
-			self.gnd_truth+=(current_event.time_stamp,current_event.gnd_truth);
+			self.gnd_truth+=[(current_event.time_stamp,current_event.gnd_truth)];
 			if (result) :
 				''' call back classifier '''
 				classifier.callback(current_event,current_event.time_stamp)
