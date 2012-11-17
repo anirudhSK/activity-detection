@@ -4,14 +4,34 @@ from sensors import *
 from math import *
 from numpy.fft import *
 import numpy
+from normal import *
+import sys
 class Train(object) :
+
+	''' Windowing primitives '''
 	last_print_out=-1
 	WINDOW_IN_SECONDS=5
 	SHIFT_TIME=1
 	current_window=[]
+
+	''' Data required for ML estimates for each label '''
+	''' Key to the hash table is the label number '''
+	mean_stats=dict()
+	sigma_stats=dict()
+	peak_freq_stats=dict()
+	strength_var_stats=dict()
+
 	def __init__(self,sim_phone) :
 		self.sim_phone=sim_phone
+		for i in range(0,5) : # all labels
+			self.mean_stats[i]=[]
+			self.sigma_stats[i]=[]
+			self.peak_freq_stats[i]=[]
+			self.strength_var_stats[i]=[]
+
 	def mean_and_var(self,value_list) :
+		if (value_list==[]) :
+			return (None,None)
 		meanSq=reduce(lambda acc,update : acc + update**2,value_list,0.0)/len(value_list)
 		mean=reduce(lambda acc,update : acc + update,value_list,0.0)/len(value_list)
 		return (mean,meanSq-mean*mean)
@@ -26,7 +46,10 @@ class Train(object) :
 			if (current_time - self.last_print_out >= self.SHIFT_TIME) :
 				''' variance and mean feature vector components '''
 				(mean,variance)=self.mean_and_var(map(lambda x : x[1],self.current_window));
-				print "Mean, variance ",mean,variance
+				sigma=sqrt(variance)
+				print "Mean, sigma ",mean,sigma
+				self.mean_stats[gnd_truth]+=[mean]
+				self.sigma_stats[gnd_truth]+=[sigma]
 
 				''' Peak frequency, compute DFT first on accel magnitudes '''
 				current_dft=rfft(map(lambda x : x[1] , self.current_window))
@@ -40,6 +63,7 @@ class Train(object) :
 					nyquist_freq=sampling_freq/2.0;
 					assert ( peak_freq <= nyquist_freq );
 					print "Peak_freq ",peak_freq," Hz"
+					self.peak_freq_stats[gnd_truth]+=[peak_freq]
 
 				''' Strength variation '''
 				summits=[]
@@ -56,4 +80,13 @@ class Train(object) :
 				if ( len(valleys) != 0 ) :
 					sigma_valley=sqrt(self.mean_and_var(map(lambda x : x[1],valleys))[1]);
 				print "Strength variation ", sigma_valley+sigma_summit
+				self.strength_var_stats[gnd_truth]+=[sigma_valley+sigma_summit]
+
+	def output_classifer(self) :
 		''' Print out any training relevant information to a file '''
+		''' In this case, it is the mean and sigma for each distribution '''
+		for i in range(0,5) : # all labels
+			print>>sys.stderr,"Label ",i," mean_dist ",Positive_Normal(self.mean_stats[i])
+			print>>sys.stderr,"label ",i," sigma_dist ",Positive_Normal(self.sigma_stats[i])
+			print>>sys.stderr,"label ",i," peak_freq_dist ",Positive_Normal(self.peak_freq_stats[i])
+			print>>sys.stderr,"label ",i," strength_var_dist ",Positive_Normal(self.strength_var_stats[i])

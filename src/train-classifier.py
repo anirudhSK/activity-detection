@@ -20,3 +20,5 @@ if __name__ == "__main__" :
 	trainer=Train(sim_phone)
 	''' Now, train it ''' 
 	sim_phone.run_trainer(trainer)
+	''' Output classifier '''
+	trainer.output_classifer()
