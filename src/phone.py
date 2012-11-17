@@ -186,7 +186,7 @@ class Phone(object) :
 			trainer.callback(current_event,current_event.time_stamp,current_event.gnd_truth)
 			''' update current time now '''
 			self.current_time=current_event.time_stamp;
-			print "Current time is ",current_event.time_stamp, " reading is ",current_event
+			#print "Current time is ",current_event.time_stamp, " reading is ",current_event
 
 	def cleanup(self) :
 		''' clean up simulator and return output '''

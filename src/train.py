@@ -13,6 +13,7 @@ class Train(object) :
 		self.sim_phone=sim_phone
 	def callback(self,sensor_reading,current_time,gnd_truth) :
 		if (isinstance(sensor_reading,Accel)) :
+			print "\n"
 			''' compute accel magnitude and keep track of windows '''
 			accel_mag=sqrt(sensor_reading.accel_x**2+sensor_reading.accel_y**2+sensor_reading.accel_z**2)
 		        self.current_window=filter(lambda x : x[0] >=  current_time - self.WINDOW_IN_SECONDS,self.current_window)
@@ -36,4 +37,24 @@ class Train(object) :
 					nyquist_freq=sampling_freq/2.0;
 					assert ( peak_freq <= nyquist_freq );
 					print "Peak_freq ",peak_freq," Hz"
+
+				''' Strength variation '''
+				summits=[]
+				valleys=[]
+				sigma_summit=0
+				sigma_valley=0
+				for i in range(1,len(self.current_window)-1) :
+					if ( (self.current_window[i][1] >= self.current_window[i+1][1]) and (self.current_window[i][1] >= self.current_window[i-1][1]) ) :
+						summits+=[self.current_window[i]]
+					if ( (self.current_window[i][1] <= self.current_window[i+1][1]) and (self.current_window[i][1] <= self.current_window[i-1][1]) ) :
+						valleys+=[self.current_window[i]]
+				if ( len(summits) != 0 ) :
+					meanSq=reduce(lambda acc,update : acc + update[1]*update[1],summits,0)/len(summits)
+					mean=reduce(lambda acc,update : acc + update[1],summits,0)/len(summits)
+					sigma_summit=sqrt(meanSq-mean*mean);
+				if ( len(valleys) != 0 ) :
+					meanSq=reduce(lambda acc,update : acc + update[1]*update[1],valleys,0)/len(valleys)
+					mean=reduce(lambda acc,update : acc + update[1],valleys,0)/len(valleys)
+					sigma_valley=sqrt(meanSq-mean*mean);
+				print "Strength variation ", sigma_valley+sigma_summit
 		''' Print out any training relevant information to a file '''
