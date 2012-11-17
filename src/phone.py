@@ -171,7 +171,7 @@ class Phone(object) :
 			self.gnd_truth+=(current_event.time_stamp,current_event.gnd_truth);
 			if (result) :
 				''' call back classifier '''
-				classifier.callback(current_event,current_event.time_stamp,type(current_event))	
+				classifier.callback(current_event,current_event.time_stamp)
 				''' update current time now '''
 				self.current_time=current_event.time_stamp;
 				print "Current time is ",current_event.time_stamp, " reading is ",current_event
@@ -183,7 +183,7 @@ class Phone(object) :
 		while (self.event_list != [] ) :
 			current_event=self.event_list.pop(0)
 			''' call back trainer'''
-			trainer.callback(current_event,current_event.time_stamp,type(current_event),current_event.gnd_truth)
+			trainer.callback(current_event,current_event.time_stamp,current_event.gnd_truth)
 			''' update current time now '''
 			self.current_time=current_event.time_stamp;
 			print "Current time is ",current_event.time_stamp, " reading is ",current_event
