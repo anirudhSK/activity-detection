@@ -11,6 +11,11 @@ class Train(object) :
 	current_window=[]
 	def __init__(self,sim_phone) :
 		self.sim_phone=sim_phone
+	def mean_and_var(self,value_list) :
+		meanSq=reduce(lambda acc,update : acc + update**2,value_list,0.0)/len(value_list)
+		mean=reduce(lambda acc,update : acc + update,value_list,0.0)/len(value_list)
+		return (mean,meanSq-mean*mean)
+
 	def callback(self,sensor_reading,current_time,gnd_truth) :
 		if (isinstance(sensor_reading,Accel)) :
 			print "\n"
@@ -20,9 +25,7 @@ class Train(object) :
 		        self.current_window+=[(current_time,accel_mag)]
 			if (current_time - self.last_print_out >= self.SHIFT_TIME) :
 				''' variance and mean feature vector components '''
-				meanSq=reduce(lambda acc,update : acc + update[1]*update[1],self.current_window,0)/len(self.current_window)
-				mean=reduce(lambda acc,update : acc + update[1],self.current_window,0)/len(self.current_window)
-				variance=meanSq-mean*mean;
+				(mean,variance)=self.mean_and_var(map(lambda x : x[1],self.current_window));
 				print "Mean, variance ",mean,variance
 
 				''' Peak frequency, compute DFT first on accel magnitudes '''
@@ -49,12 +52,8 @@ class Train(object) :
 					if ( (self.current_window[i][1] <= self.current_window[i+1][1]) and (self.current_window[i][1] <= self.current_window[i-1][1]) ) :
 						valleys+=[self.current_window[i]]
 				if ( len(summits) != 0 ) :
-					meanSq=reduce(lambda acc,update : acc + update[1]*update[1],summits,0)/len(summits)
-					mean=reduce(lambda acc,update : acc + update[1],summits,0)/len(summits)
-					sigma_summit=sqrt(meanSq-mean*mean);
+					sigma_summit=sqrt(self.mean_and_var(map(lambda x : x[1],summits))[1]);
 				if ( len(valleys) != 0 ) :
-					meanSq=reduce(lambda acc,update : acc + update[1]*update[1],valleys,0)/len(valleys)
-					mean=reduce(lambda acc,update : acc + update[1],valleys,0)/len(valleys)
-					sigma_valley=sqrt(meanSq-mean*mean);
+					sigma_valley=sqrt(self.mean_and_var(map(lambda x : x[1],valleys))[1]);
 				print "Strength variation ", sigma_valley+sigma_summit
 		''' Print out any training relevant information to a file '''
