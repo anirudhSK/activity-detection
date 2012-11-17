@@ -178,6 +178,16 @@ class Phone :
 		self.cleanup()
 		return (self.accel_rate,self.wifi_rate,self.gps_rate,self.gsm_rate,self.nwk_loc_rate)
 
+	def run_trainer(self,trainer) :
+		# main event loop of trace driven simulation
+		while (self.event_list != [] ) :
+			current_event=self.event_list.pop(0)
+			''' call back trainer'''
+			trainer.callback(current_event,current_event.time_stamp,type(current_event),current_event.gnd_truth)
+			''' update current time now '''
+			self.current_time=current_event.time_stamp;
+			print "Current time is ",current_event.time_stamp, " reading is ",current_event
+
 	def cleanup(self) :
 		''' clean up simulator and return output '''
 		self.accel_rate.append((self.current_time,1/self.accel_interval));
