@@ -37,6 +37,7 @@ class Stats(object) :
 	def latency_stats(self):# compute latency of detection
 		return [] 	# TODO
 	def energy_stats(self): # compute energy cost of detection over the entire trace
+		# TODO : This is nonsensical now, fix this up.
 		accel_rate=sampling_rates[0]
 		wifi_rate=sampling_rates[1]
 		gps_rate=sampling_rates[2]

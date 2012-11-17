@@ -23,3 +23,4 @@ if __name__ == "__main__" :
 	sampling_rate_vector=sim_phone.run_classifier(classifier)
 	''' print statistics '''
 	statistics=Stats(sim_phone.gnd_truth,classifier.classifier_output,sampling_rate_vector)	
+	print statistics.hard_match()
