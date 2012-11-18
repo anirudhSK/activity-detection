@@ -3,6 +3,7 @@ from sensors import *
 from math import *
 from numpy.fft import *
 from normal import *
+from distributions import *
 # classify based on traces
 class Classify(object) :
 	''' Windowing primitives '''
@@ -46,11 +47,14 @@ class Classify(object) :
 		''' Predict the label given the mean, sigma, peak frequency and strength variation components of the feature vector '''
 		likelihood=[0]*5
 		for label in range(0,5) :
-			likelihood[label] = log(self.mean_fv_dist[label].pdf(mean_fv))   + log(self.sigma_fv_dist[label].pdf(sigma_fv)) + log(self.peak_freq_fv_dist[label].pdf(peak_freq_fv)) + log(self.strength_var_fv_dist[label].pdf(strength_var_fv))
-		return	likelihood.index(max(likelihood))
+			likelihood[label] = (self.mean_fv_dist[label].pdf(mean_fv))   * (self.sigma_fv_dist[label].pdf(sigma_fv)) * (self.peak_freq_fv_dist[label].pdf(peak_freq_fv)) * (self.strength_var_fv_dist[label].pdf(strength_var_fv))
+		posterior_pmf=[0]*5
+		for label in range(0,5) :
+			posterior_pmf[label]=likelihood[label]/sum(likelihood)
+		return	Distribution(5,posterior_pmf)
 
 	def callback(self,sensor_reading,current_time) :
-		''' Interface to simulator :  Leave final result as (timestamp,output_state) pairs in classifier_output '''
+		''' Interface to simulator :  Leave final result as (timestamp,output_distribution) pairs in classifier_output '''
 		if (isinstance(sensor_reading,Accel)) :
 			print "\n"
 			''' compute accel magnitude and keep track of windows '''

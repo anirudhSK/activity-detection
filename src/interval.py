@@ -1,17 +1,18 @@
 #! /usr/bin/python
+from distributions import *
 # represent an interval
-class Interval(object) :	# Represents a closed Interval on the time axis with a gnd truth
+class Interval(object) :	# Represents a closed Interval in time along with a Distribution of states valid over that interval
 	start=0
 	end=0
-	gnd_truth=-1
+	distribution=Distribution(5,[0]*5)
 	def get_length(self) :
 		return self.end-self.start
-	def __init__ (self,start,end,gnd_truth) :
+	def __init__ (self,start,end,distribution) :
 		self.start=start
 		self.end=end
-		self.gnd_truth=gnd_truth
+		self.distribution=distribution
 	def __str__(self) :
-		return "Interval: start "+str(self.start)+", end "+str(self.end)+", gnd "+str(self.gnd_truth)
+		return "Interval: start "+str(self.start)+", end "+str(self.end)+", distribution "+str(self.distribution)
 	def __repr__(self) :
 		return str(self)
 	def get_overlap(self,interval) :

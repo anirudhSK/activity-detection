@@ -1,6 +1,7 @@
 #! /usr/bin/python
 # class representing phone
 from sensors import *
+from distributions import *
 class Phone(object) :
 	''' sampling interval defaults '''
 	accel_interval=1.0
@@ -168,7 +169,9 @@ class Phone(object) :
 		while (self.event_list != [] ) :
 			current_event=self.event_list.pop(0)
 			result=self.subsample(current_event);
-			self.gnd_truth+=[(current_event.time_stamp,current_event.gnd_truth)];
+			pmf=[0]*5 	# probability dist of ground truth
+			pmf[current_event.gnd_truth]=1
+			self.gnd_truth+=[(current_event.time_stamp,Distribution(len(pmf),pmf))];
 			if (result) :
 				''' call back classifier '''
 				classifier.callback(current_event,current_event.time_stamp)
