@@ -4,7 +4,7 @@
 =======================
 Allow the simulator to swap in different implementations of the classifier automatically. Now it can be done manually.
 
-5. Data structures that have random values for now :
+3. Data structures that have random values for now :
 =======================
 	1. Markov  transition rate matrix in stitch-traces.py
 	2. Classifier's normal distribution parameters in eval-classifier.py. This should be the output of train-classifier.py, but I can't think of a neat way to pipe this.
@@ -12,8 +12,12 @@ Allow the simulator to swap in different implementations of the classifier autom
 	4. Input traces to eval-classifier need to be clean as well.
 	5. Energy values are totally random for now. Besides, we need to convert sampling rate to integer or some such discrete repr.
 
-6 Floating point imprecisions :
+4 Floating point imprecisions :
 ================================
 	1. We use floating point sampling rate values as key to the energy profile hash table.
 	2. We use floating point values in Distributions and we try and compare two distributions.
 	Both of the above are problematic, and we need to fix this.
+
+5 Timestamps :
+=============================
+	1. Standardise these across all files to either use milliseconds or seconds but not both.
