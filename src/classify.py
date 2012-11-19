@@ -18,7 +18,7 @@ class Classify(object) :
 	peak_freq_fv_dist=[0]*5
 	strength_var_fv_dist=[0]*5
 
-	def __init__(self,sim_phone) :
+	def __init__(self,sim_phone,classifier_model) :
 		self.sim_phone=sim_phone
 		self.classifier_output=[]
 
@@ -29,13 +29,8 @@ class Classify(object) :
 		sim_phone.change_gsm_interval(1000)
 		sim_phone.change_nwk_loc_interval(1000)
 
-		''' TODO : Fill in sensible values for these tables, right now it's junk '''
-		for i in range(0,5) :
-			self.mean_fv_dist[i]=Positive_Normal()
-			self.sigma_fv_dist[i]=Positive_Normal()
-			self.peak_freq_fv_dist[i]=Positive_Normal()
-			self.strength_var_fv_dist[i]=Positive_Normal()
-
+		execfile(classifier_model)
+		
 	def mean_and_var(self,value_list) :
 		if (value_list==[]) :
 			return (None,None)
