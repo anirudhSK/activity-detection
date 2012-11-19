@@ -21,4 +21,4 @@ class Distribution(object) :
 	def mode (self) :
 		return self.pmf.index(max(self.pmf))
 	def __mul__(self,other) :	# dot product
-		return reduce(lambda acc,update : acc+update[0]*update[1],zip(self.pmf,other.pmf))
+		return reduce(lambda acc,update : acc+update[0]*update[1],zip(self.pmf,other.pmf),0.0)
