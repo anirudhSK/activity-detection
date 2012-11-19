@@ -8,7 +8,9 @@ class Distribution(object) :
 		self.num_states=num_states
 		self.pmf=pmf
 	def __str__(self) :
-		return "Number of states ",num_states," pmf : ",pmf
+		return "Number of states "+str(self.num_states)+" pmf : "+str(self.pmf)+"\n"
+	def __repr__(self) :
+		return self.__str__()
 	def __eq__(self,other) :
 		if (self.num_states != other.num_states) :
 			return False

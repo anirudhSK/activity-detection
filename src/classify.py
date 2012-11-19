@@ -23,7 +23,7 @@ class Classify(object) :
 		self.classifier_output=[]
 
 		''' set initial sampling intervals in milliseconds '''
-		sim_phone.change_accel_interval(330)
+		sim_phone.change_accel_interval(10)
 		sim_phone.change_wifi_interval(1000)
 		sim_phone.change_gps_interval(1000)
 		sim_phone.change_gsm_interval(1000)
