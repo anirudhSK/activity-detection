@@ -25,4 +25,4 @@ if __name__ == "__main__" :
 	sampling_rate_vector=sim_phone.run_classifier(classifier)
 	''' print statistics '''
 	statistics=Stats(sim_phone.gnd_truth,classifier.classifier_output,sampling_rate_vector,power_model)
-	print statistics.match(match_type='hard')
+	print>>sys.stderr,statistics.match(match_type='hard')

@@ -2,6 +2,7 @@
 from sensors import *
 from math import *
 from numpy.fft import *
+import numpy
 from normal import *
 from distributions import *
 # classify based on traces
