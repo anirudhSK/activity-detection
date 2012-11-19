@@ -3,12 +3,12 @@
 from sensors import *
 from distributions import *
 class Phone(object) :
-	''' sampling interval defaults '''
-	accel_interval=1.0
-	wifi_interval=1.0
-	gps_interval=1.0
-	gsm_interval=1.0
-	nwk_loc_interval=1.0
+	''' sampling interval defaults in milliseconds '''
+	accel_interval=1000
+	wifi_interval=1000
+	gps_interval=1000
+	gsm_interval=1000
+	nwk_loc_interval=1000
 	
 	''' current time on trace '''
 	current_time=0
@@ -102,7 +102,7 @@ class Phone(object) :
 		fh=open(self.accel_trace,"r");
 		for line in fh.readlines() :
 			records=line.split(',')
-			time_stamp=float(records[1])/1000.0
+			time_stamp=int(float(records[1]))
 			gnd_truth=int(records[3].split('|')[3])
 			accel_reading=Accel(float(records[3].split('|')[0]),float(records[3].split('|')[1]),float(records[3].split('|')[2]),time_stamp,gnd_truth)
 			self.accel_list+=[accel_reading]
@@ -111,7 +111,7 @@ class Phone(object) :
 		fh=open(self.wifi_trace,"r");
 		for line in fh.readlines() :
 			records=line.split(',')
-			time_stamp=float(records[1])/1000.0
+			time_stamp=int(float(records[1]))
 			gnd_truth=int(records[3].split('|')[5])
 			wifi_scan_data=records[3]
 			''' determine number of APs '''
@@ -136,7 +136,7 @@ class Phone(object) :
 		fh=open(self.gps_trace,"r");
 		for line in fh.readlines() :
 			records=line.split(',')
-			time_stamp=float(records[1])/1000.0
+			time_stamp=int(float(records[1]))
 			gnd_truth=int(records[3].split('|')[8])
 			gps_reading=GPS(float(records[3].split('|')[2]),float(records[3].split('|')[3]),time_stamp,gnd_truth)
 			self.gps_list+=[gps_reading]
@@ -145,7 +145,7 @@ class Phone(object) :
 		fh=open(self.gsm_trace,"r");
 		for line in fh.readlines() :
 			records=line.split(',')
-			time_stamp=float(records[1])/1000.0
+			time_stamp=int(float(records[1]))
 			gnd_truth=int(records[3].split('|')[5])
 			gsm_scan_data=records[3]
 			''' determine number of Base Stations '''
@@ -171,7 +171,7 @@ class Phone(object) :
 		fh=open(self.nwk_loc_trace,"r");
 		for line in fh.readlines() :
 			records=line.split(',')
-			time_stamp=float(records[1])/1000.0
+			time_stamp=int(float(records[1]))
 			gnd_truth=int(records[3].split('|')[8])
 			nwk_loc_reading=NwkLoc(float(records[3].split('|')[2]),float(records[3].split('|')[3]),time_stamp,gnd_truth)
 			self.nwk_loc_list+=[nwk_loc_reading]
@@ -189,7 +189,7 @@ class Phone(object) :
 				classifier.callback(current_event,current_event.time_stamp)
 				''' update current time now '''
 				self.current_time=current_event.time_stamp;
-				print "Current time is ",current_event.time_stamp, " reading is ",current_event
+				print "Current time is ",current_event.time_stamp, " ms, reading is ",current_event
 		self.cleanup()
 		return (self.accel_rate,self.wifi_rate,self.gps_rate,self.gsm_rate,self.nwk_loc_rate)
 

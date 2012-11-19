@@ -12,7 +12,7 @@ class Accel(object) :
 		self.time_stamp=time_stamp
 		self.gnd_truth=gnd_truth
 	def __str__(self) :
-		return "Accel: "+str(self.time_stamp)+"\t"+str(self.gnd_truth)+"\t"+str(self.accel_x)+"\t"+str(self.accel_y)+"\t"+str(self.accel_z)
+		return "Accel: "+str(self.time_stamp)+" ms \t"+str(self.gnd_truth)+"\t"+str(self.accel_x)+"\t"+str(self.accel_y)+"\t"+str(self.accel_z)
 
 class WiFi(object) :
 	ap_list=[]
@@ -26,7 +26,7 @@ class WiFi(object) :
 		self.time_stamp=time_stamp
 		self.gnd_truth=gnd_truth
 	def __str__(self) :
-		return "WiFi: "+str(self.time_stamp)+"\t"+str(self.gnd_truth)+"\t"+str(self.ap_list)+"\t"+str(self.rssi_list)
+		return "WiFi: "+str(self.time_stamp)+" ms \t"+str(self.gnd_truth)+"\t"+str(self.ap_list)+"\t"+str(self.rssi_list)
 
 class GPS(object) :
 	lat=0
@@ -39,7 +39,7 @@ class GPS(object) :
 		self.time_stamp=time_stamp
 		self.gnd_truth=gnd_truth
 	def __str__(self) :
-		return "GPS: "+str(self.time_stamp)+"\t"+str(self.gnd_truth)+"\t"+str(self.lat)+"\t"+str(self.lon)
+		return "GPS: "+str(self.time_stamp)+" ms \t"+str(self.gnd_truth)+"\t"+str(self.lat)+"\t"+str(self.lon)
 
 class GSM(object) :
 	cell_tower_list=[]
@@ -53,7 +53,7 @@ class GSM(object) :
 		self.time_stamp=time_stamp
 		self.gnd_truth=gnd_truth
 	def __str__(self) :
-		return "GSM: "+str(self.time_stamp)+"\t"+str(self.gnd_truth)+"\t"+str(self.cell_tower_list)+"\t"+str(self.rssi_list)
+		return "GSM: "+str(self.time_stamp)+" ms \t"+str(self.gnd_truth)+"\t"+str(self.cell_tower_list)+"\t"+str(self.rssi_list)
 
 class NwkLoc(object) :
 	lat=0
@@ -66,4 +66,4 @@ class NwkLoc(object) :
 		self.time_stamp=time_stamp
 		self.gnd_truth=gnd_truth
 	def __str__(self) :
-		return "NwkLoc: "+str(self.time_stamp)+"\t"+str(self.gnd_truth)+"\t"+str(self.lat)+"\t"+str(self.lon)
+		return "NwkLoc: "+str(self.time_stamp)+" ms \t"+str(self.gnd_truth)+"\t"+str(self.lat)+"\t"+str(self.lon)

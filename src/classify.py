@@ -8,8 +8,8 @@ from distributions import *
 class Classify(object) :
 	''' Windowing primitives '''
 	last_print_out=-1
-	WINDOW_IN_SECONDS=5
-	SHIFT_TIME=1
+	WINDOW_IN_MILLI_SECONDS=5000
+	SHIFT_TIME_MILLI_SECONDS=1000
 	current_window=[]
 
 	''' parameters of distributions used for Naive Bayes prediction '''
@@ -22,12 +22,12 @@ class Classify(object) :
 		self.sim_phone=sim_phone
 		self.classifier_output=[]
 
-		''' set initial sampling intervals '''
-		sim_phone.change_accel_interval(0.33)
-		sim_phone.change_wifi_interval(1.0)
-		sim_phone.change_gps_interval(0.5)
-		sim_phone.change_gsm_interval(1)
-		sim_phone.change_nwk_loc_interval(1)
+		''' set initial sampling intervals in milliseconds '''
+		sim_phone.change_accel_interval(330)
+		sim_phone.change_wifi_interval(1000)
+		sim_phone.change_gps_interval(1000)
+		sim_phone.change_gsm_interval(1000)
+		sim_phone.change_nwk_loc_interval(1000)
 
 		''' TODO : Fill in sensible values for these tables, right now it's junk '''
 		for i in range(0,5) :
@@ -59,9 +59,9 @@ class Classify(object) :
 			print "\n"
 			''' compute accel magnitude and keep track of windows '''
 			accel_mag=sqrt(sensor_reading.accel_x**2+sensor_reading.accel_y**2+sensor_reading.accel_z**2)
-		        self.current_window=filter(lambda x : x[0] >=  current_time - self.WINDOW_IN_SECONDS,self.current_window)
+		        self.current_window=filter(lambda x : x[0] >=  current_time - self.WINDOW_IN_MILLI_SECONDS,self.current_window)
 		        self.current_window+=[(current_time,accel_mag)]
-			if (current_time - self.last_print_out >= self.SHIFT_TIME) :
+			if (current_time - self.last_print_out >= self.SHIFT_TIME_MILLI_SECONDS) :
 				''' variance and mean feature vector components '''
 				(mean,variance)=self.mean_and_var(map(lambda x : x[1],self.current_window));
 				sigma=sqrt(variance)

@@ -11,7 +11,7 @@ class MarkovChain(object) :
 		for i in range(0,len(self.states)) :
 			self.transition_rates.append([])
 			for j in range(0,len(self.states)) :
-				self.transition_rates[i].append(1/600.0); # one transition every 10 min
+				self.transition_rates[i].append(1/600000.0); # one transition every 600000 ms
 	def simulate(self,duration) :
 		time=0;
 		''' initially, pick state with a uniform prior '''

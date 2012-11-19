@@ -12,7 +12,7 @@ class Interval(object) :	# Represents a closed Interval in time along with a Dis
 		self.end=end
 		self.distribution=distribution
 	def __str__(self) :
-		return "Interval: start "+str(self.start)+", end "+str(self.end)+", distribution "+str(self.distribution)
+		return "Interval: start "+str(self.start)+" ms, end "+str(self.end)+" ms, distribution "+str(self.distribution)
 	def __repr__(self) :
 		return str(self)
 	def get_overlap(self,interval) :

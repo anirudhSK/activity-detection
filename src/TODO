@@ -20,4 +20,5 @@ Allow the simulator to swap in different implementations of the classifier autom
 
 5 Timestamps :
 =============================
-	1. Standardise these across all files to either use milliseconds or seconds but not both.
+	1. sampling rates are now in samples per millisecond.
+	2. Energy is in Joules per millisecond, to make sure everything is in milliseconds (which can be treated as an integer).

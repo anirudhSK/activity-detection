@@ -5,20 +5,20 @@ class Trace(object) :
 	start_time=-1;
 	end_time=-1;
 	trace_in_mem=[];
+	fh=open("result.out","w");
 	def __init__(self,trace_file) : 
 		self.trace_file=trace_file;
 		fh=open(self.trace_file,"r");
 		for line in fh.readlines() :
 			if( self.start_time == -1) :
-				self.start_time=float(line.split(',')[1])/1000.0;
-			self.end_time=float(line.split(',')[1])/1000.0;
+				self.start_time=int(float(line.split(',')[1]))
+			self.end_time=int(float(line.split(',')[1]))
 			self.trace_in_mem+=[line]
 
 	def calc_length(self) :
 		return self.end_time-self.start_time
 
 	def rewrite_trace_file(self,start,end) :
-		fh=open("result.out","a");
 		time_written_out=start
 		print "start of new activity is ",start, " and end is ",end
 		while ( time_written_out < end ) :
@@ -26,13 +26,13 @@ class Trace(object) :
 			epoch_start=time_written_out
 			epoch_end  =min(time_written_out+self.calc_length(),end)
 			for line in self.trace_in_mem :
-				actual_ts=float(line.split(',')[1])/1000.0;
+				actual_ts=int(float(line.split(',')[1]))
 				if ( ((actual_ts-self.start_time) >= 0 ) and 
 				     ((actual_ts-self.start_time) <= epoch_end - epoch_start  )) :
 					mod_ts=actual_ts-self.start_time+epoch_start;
 					records=line.split(',')
-					new_line=records[0]+","+str(mod_ts*1000.0); # ts are in ms
+					new_line=records[0]+","+str(mod_ts); # ts are in ms
 					for i in range (2,len(records)) :
 						new_line+=","+records[i]
-					fh.write(new_line)
+					self.fh.write(new_line)
 			time_written_out=epoch_end
