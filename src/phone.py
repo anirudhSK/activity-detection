@@ -145,12 +145,16 @@ class Phone(object) :
 			''' determine number of Base Stations '''
 			num_bs=int(gsm_scan_data.split('|')[6])
 			i=0
-			bs_list =[gsm_scan_data.split('|')[0]]
-			rssi_list=[int(gsm_scan_data.split('|')[2])]
+			rssi=int(gsm_scan_data.split('|')[2])
+			if (rssi != 99) : # invalid RSSI
+				bs_list =[gsm_scan_data.split('|')[0]]
+				rssi_list=[rssi]
 			for i in range(0,num_bs) :
 				next_bs_data=gsm_scan_data.split('|')[7+3*i:7+3*i+3]
-				bs_list+=[next_bs_data[0]];
-				rssi_list+=[int(next_bs_data[2])];
+				rssi=int(next_bs_data[2])
+				if (rssi != 99) : # invalid RSSI
+					bs_list+=[next_bs_data[0]];
+					rssi_list+=[rssi];
 			assert(len(bs_list)==len(rssi_list))	
 			self.gsm_list+=[GSM(bs_list,rssi_list,time_stamp,gnd_truth)]
 	''' TODO Data format changed before May 2012. Now, the after May 2012 format is implemented '''
