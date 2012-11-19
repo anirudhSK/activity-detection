@@ -5,14 +5,17 @@ class Trace(object) :
 	start_time=-1;
 	end_time=-1;
 	trace_in_mem=[];
-	fh=open("result.out","w");
+	sensor_dict=['Accel','Wifi','GPS','GSM','Geo Loc']
+	file_handles=[open("stitched-"+str(sensor_dict[i])+".out","w") for i in range(0,5)];
 	def __init__(self,trace_file) : 
 		self.trace_file=trace_file;
 		fh=open(self.trace_file,"r");
 		for line in fh.readlines() :
-			if( self.start_time == -1) :
-				self.start_time=int(float(line.split(',')[1]))
-			self.end_time=int(float(line.split(',')[1]))
+			ts_milli=int(float(line.split(',')[1]))
+			if ( ( self.start_time == -1) or (ts_milli < self.start_time) ) :
+				self.start_time=ts_milli
+			if ( ( self.end_time   == -1) or (ts_milli >   self.end_time) ) :
+				self.end_time  =ts_milli
 			self.trace_in_mem+=[line]
 
 	def calc_length(self) :
@@ -27,6 +30,7 @@ class Trace(object) :
 			epoch_end  =min(time_written_out+self.calc_length(),end)
 			for line in self.trace_in_mem :
 				actual_ts=int(float(line.split(',')[1]))
+				sensor_type=self.sensor_dict.index(line.split(',')[2])
 				if ( ((actual_ts-self.start_time) >= 0 ) and 
 				     ((actual_ts-self.start_time) <= epoch_end - epoch_start  )) :
 					mod_ts=actual_ts-self.start_time+epoch_start;
@@ -34,5 +38,5 @@ class Trace(object) :
 					new_line=records[0]+","+str(mod_ts); # ts are in ms
 					for i in range (2,len(records)) :
 						new_line+=","+records[i]
-					self.fh.write(new_line)
+					self.file_handles[sensor_type].write(new_line)
 			time_written_out=epoch_end
