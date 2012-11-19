@@ -55,7 +55,7 @@ class Train(object) :
 				current_dft=rfft(map(lambda x : x[1] , self.current_window))
 				if (len(current_dft) > 1) :
 					''' ignore DC component '''
-					peak_freq_index=current_dft[1:].argmax() + 1;
+					peak_freq_index=numpy.abs(current_dft[1:]).argmax() + 1;
 					''' sampling_frequency '''
 					N=float(len(self.current_window))
 					sampling_freq=N/(self.current_window[-1][0]-self.current_window[0][0])
