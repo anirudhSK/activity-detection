@@ -5,7 +5,7 @@ from distributions import *
 class Stats(object) :
 	gnd_truth=[]		# list of time, gnd_truth pairs
 	classifier_output=[]	# list of time, classifier output pairs
-	sampling_rates=()# 5 tuple of lists each representing one sensor's rate as a fn of time
+	sampling_intervals=()# 5 tuple of lists each representing one sensor's rate as a fn of time
 	
 	''' power stats for each phone '''
 	power_accel=dict()
@@ -13,10 +13,10 @@ class Stats(object) :
 	power_gps=dict()
 	power_gsm=dict()
 	power_nwk_loc=dict()
-	def __init__ (self,gnd_truth,classifier_output,sensor_sampling_rates,power_model) :
+	def __init__ (self,gnd_truth,classifier_output,sensor_sampling_intervals,power_model) :
 		self.gnd_truth=gnd_truth
 		self.classifier_output=classifier_output
-		self.sampling_rates=sensor_sampling_rates
+		self.sampling_intervals=sensor_sampling_intervals
 		execfile(power_model)
 	def match(self,match_type='hard'):	# compute hard or soft path metric between the two lists
 		# compute intervals for both lists
@@ -39,22 +39,22 @@ class Stats(object) :
 	def latency_stats(self):# compute latency of detection
 		return [] 	# TODO
 	def energy_stats(self): # compute energy cost of detection over the entire trace
-		accel_rate=sampling_rates[0]
-		wifi_rate=sampling_rates[1]
-		gps_rate=sampling_rates[2]
-		gsm_rate=sampling_rates[3]
-		nwk_loc_rate=sampling_rates[4]
+		accel_sampling_intervals=sampling_intervals[0]
+		wifi_sampling_intervals=sampling_intervals[1]
+		gps_sampling_intervals=sampling_intervals[2]
+		gsm_sampling_intervals=sampling_intervals[3]
+		nwk_loc_sampling_intervals=sampling_intervals[4]
 		energy=0
-		for i in range(0,len(accel_rate)-1) :
-			energy+=self.power_accel[accel_rate[i][1]]*(accel_rate[i+1][0]-accel_rate[i][0])
-		for i in range(0,len(wifi_rate)-1) :
-			energy+=self.power_wifi[wifi_rate[i][1]]*(wifi_rate[i+1][0]-wifi_rate[i][0])
-		for i in range(0,len(gps_rate)-1) :
-			energy+=self.power_gps[gps_rate[i][1]]*(gps_rate[i+1][0]-gps_rate[i][0])
-		for i in range(0,len(gsm_rate)-1) :
-			energy+=self.power_gsm[gsm_rate[i][1]]*(gsm_rate[i+1][0]-gsm_rate[i][0])
-		for i in range(0,len(accel_rate)-1) :
-			energy+=self.power_nwk_loc[nwk_loc_rate[i][1]]*(nwk_loc_rate[i+1][0]-nwk_loc_rate[i][0])
+		for i in range(0,len(accel_sampling_intervals)-1) :
+			energy+=self.power_accel[accel_sampling_intervals[i][1]]*(accel_sampling_intervals[i+1][0]-accel_sampling_intervals[i][0])
+		for i in range(0,len(wifi_sampling_intervals)-1) :
+			energy+=self.power_wifi[wifi_sampling_intervals[i][1]]*(wifi_sampling_intervals[i+1][0]-wifi_sampling_intervals[i][0])
+		for i in range(0,len(gps_sampling_intervals)-1) :
+			energy+=self.power_gps[gps_sampling_intervals[i][1]]*(gps_sampling_intervals[i+1][0]-gps_sampling_intervals[i][0])
+		for i in range(0,len(gsm_sampling_intervals)-1) :
+			energy+=self.power_gsm[gsm_sampling_intervals[i][1]]*(gsm_sampling_intervals[i+1][0]-gsm_sampling_intervals[i][0])
+		for i in range(0,len(accel_sampling_intervals)-1) :
+			energy+=self.power_nwk_loc[nwk_loc_sampling_intervals[i][1]]*(nwk_loc_sampling_intervals[i+1][0]-nwk_loc_sampling_intervals[i][0])
 		return energy	
 	def interval_list(self,time_series) :
 		''' Compute a range-list that says time 1 to time 2 distribution 1, and so on '''

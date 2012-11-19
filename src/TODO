@@ -12,12 +12,6 @@ Allow the simulator to swap in different implementations of the classifier autom
 	4. Input traces to eval-classifier need to be clean as well.
 	5. Energy values are totally random for now. Besides, we need to convert sampling rate to integer or some such discrete repr.
 
-4 Floating point imprecisions :
-================================
-	1. We use floating point sampling rate values as key to the energy profile hash table.
-	2. We use floating point values in Distributions and we try and compare two distributions.
-	Both of the above are problematic, and we need to fix this.
-
 5 Timestamps :
 =============================
 	1. sampling rates are now in samples per millisecond.

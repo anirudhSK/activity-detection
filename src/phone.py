@@ -38,11 +38,11 @@ class Phone(object) :
 	next_nwk_loc_timestamp=-1
 
 	''' sampling rate vectors for sensors '''
-	accel_rate=[]
-	wifi_rate=[]
-	gps_rate=[]
-	gsm_rate=[]
-	nwk_loc_rate=[]
+	accel_sampling_intervals=[]
+	wifi_sampling_intervals=[]
+	gps_sampling_intervals=[]
+	gsm_sampling_intervals=[]
+	nwk_loc_sampling_intervals=[]
 
 	def __init__ (self,accel_trace,wifi_trace,gps_trace,gsm_trace,nwk_loc_trace) :
 		''' Populate trace file names '''
@@ -67,34 +67,28 @@ class Phone(object) :
 		self.next_gps_timestamp=self.gps_list[0].time_stamp
 		self.next_gsm_timestamp=self.gsm_list[0].time_stamp
 		self.next_nwk_loc_timestamp=self.nwk_loc_list[0].time_stamp
-		''' Write into sampling rate vectors '''
-		self.accel_rate.append((self.current_time,1/self.accel_interval));
-		self.wifi_rate.append((self.current_time,1/self.wifi_interval));
-		self.gps_rate.append((self.current_time,1/self.gps_interval));
-		self.gsm_rate.append((self.current_time,1/self.gsm_interval));
-		self.nwk_loc_rate.append((self.current_time,1/self.nwk_loc_interval));
 
 	''' Methods to change sampling interval '''
 	def change_accel_interval(self,accel_interval):
 		self.accel_interval=accel_interval
 		self.next_accel_timestamp=self.current_time
-		self.accel_rate.append((self.current_time,1/self.accel_interval));
+		self.accel_sampling_intervals.append((self.current_time,self.accel_interval));
 	def change_wifi_interval(self,wifi_interval):
 		self.wifi_interval=wifi_interval
 		self.next_wifi_timestamp=self.current_time
-		self.wifi_rate.append((self.current_time,1/self.wifi_interval));		
+		self.wifi_sampling_intervals.append((self.current_time,self.wifi_interval));		
 	def change_gps_interval(self,gps_interval):
 		self.gps_interval=gps_interval
 		self.next_gps_timestamp=self.current_time
-		self.gps_rate.append((self.current_time,1/self.gps_interval));
+		self.gps_sampling_intervals.append((self.current_time,self.gps_interval));
 	def change_gsm_interval(self,gsm_interval):
 		self.gsm_interval=gsm_interval
 		self.next_gsm_timestamp=self.current_time
-		self.gsm_rate.append((self.current_time,1/self.gsm_interval));
+		self.gsm_sampling_intervals.append((self.current_time,self.gsm_interval));
 	def change_nwk_loc_interval(self,nwk_loc_interval) :
 		self.nwk_loc_interval=nwk_loc_interval
 		self.next_nwk_loc_timestamp=self.current_time
-		self.nwk_loc_rate.append((self.current_time,1/self.nwk_loc_interval));
+		self.nwk_loc_sampling_intervals.append((self.current_time,self.nwk_loc_interval));
 
 
 	''' File handling routines '''
@@ -178,6 +172,14 @@ class Phone(object) :
 
 	def run_classifier(self,classifier) :
 		# main event loop of trace driven simulation
+		''' Write into sampling rate vectors before starting '''
+		self.current_time=self.event_list[0]
+		self.accel_sampling_intervals.append((self.current_time,self.accel_interval));
+		self.wifi_sampling_intervals.append((self.current_time,self.wifi_interval));
+		self.gps_sampling_intervals.append((self.current_time,self.gps_interval));
+		self.gsm_sampling_intervals.append((self.current_time,self.gsm_interval));
+		self.nwk_loc_sampling_intervals.append((self.current_time,self.nwk_loc_interval));
+
 		while (self.event_list != [] ) :
 			current_event=self.event_list.pop(0)
 			result=self.subsample(current_event);
@@ -191,7 +193,7 @@ class Phone(object) :
 				self.current_time=current_event.time_stamp;
 				print "Current time is ",current_event.time_stamp, " ms, reading is ",current_event
 		self.cleanup()
-		return (self.accel_rate,self.wifi_rate,self.gps_rate,self.gsm_rate,self.nwk_loc_rate)
+		return (self.accel_sampling_intervals,self.wifi_sampling_intervals,self.gps_sampling_intervals,self.gsm_sampling_intervals,self.nwk_loc_sampling_intervals)
 
 	def run_trainer(self,trainer) :
 		# main event loop of trace driven simulation
@@ -205,11 +207,11 @@ class Phone(object) :
 
 	def cleanup(self) :
 		''' clean up simulator and return output '''
-		self.accel_rate.append((self.current_time,1/self.accel_interval));
-		self.wifi_rate.append((self.current_time,1/self.wifi_interval));		
-		self.gps_rate.append((self.current_time,1/self.gps_interval));
-		self.gsm_rate.append((self.current_time,1/self.gsm_interval));
-		self.nwk_loc_rate.append((self.current_time,1/self.nwk_loc_interval));
+		self.accel_sampling_intervals.append((self.current_time,self.accel_interval));
+		self.wifi_sampling_intervals.append((self.current_time,self.wifi_interval));		
+		self.gps_sampling_intervals.append((self.current_time,self.gps_interval));
+		self.gsm_sampling_intervals.append((self.current_time,self.gsm_interval));
+		self.nwk_loc_sampling_intervals.append((self.current_time,self.nwk_loc_interval));
 
 	def subsample (self,event) :
 		if (isinstance(event,Accel)) :
