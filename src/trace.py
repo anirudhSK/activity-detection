@@ -31,7 +31,7 @@ class Trace(object) :
 				     ((actual_ts-self.start_time) <= epoch_end - epoch_start  )) :
 					mod_ts=actual_ts-self.start_time+epoch_start;
 					records=line.split(',')
-					new_line=records[0]+","+str(mod_ts);
+					new_line=records[0]+","+str(mod_ts*1000.0); # ts are in ms
 					for i in range (2,len(records)) :
 						new_line+=","+records[i]
 					fh.write(new_line)
