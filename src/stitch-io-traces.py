@@ -4,7 +4,7 @@ from trace import *
 ''' Program to stitch traces together into a larger trace '''
 import sys
 if ( len(sys.argv) < 8) :
-	print "Usage : python markov-chain.py duration static_trace walking_trace running_trace biking_trace driving_trace random_seed "
+	print "Usage : python markov-chain.py duration_in_ms static_trace walking_trace running_trace biking_trace driving_trace random_seed "
 	exit(5)
 else :
 	duration=int(sys.argv[1]);
