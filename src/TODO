@@ -1,8 +1,6 @@
-1. Handle timestamps not being in order due to non-monotonic clock.
-2. When using stitch-traces.py, make sure that the entire trace file has a single ground truth or prune if it's not that way. I guess we could just do this manually and create a bunch of really clean trace files.
-3. Write the latency calculation code.
+1. Write the latency calculation code.
 
-4. If possible :
+2. If possible :
 =======================
 Allow the simulator to swap in different implementations of the classifier automatically. Now it can be done manually.
 
@@ -10,7 +8,7 @@ Allow the simulator to swap in different implementations of the classifier autom
 =======================
 	1. Markov  transition rate matrix in stitch-traces.py
 	2. Classifier's normal distribution parameters in eval-classifier.py. This should be the output of train-classifier.py, but I can't think of a neat way to pipe this.
-	3. Input traces to train-classifier need to be clean (points 1 and 2 above) and need to be spread out across all labels equally to avoid bias.
+	3. Input traces to train-classifier need to be clean and need to be spread out across all labels equally to avoid bias.
 	4. Input traces to eval-classifier need to be clean as well.
 	5. Energy values are totally random for now. Besides, we need to convert sampling rate to integer or some such discrete repr.
 

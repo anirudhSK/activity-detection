@@ -117,12 +117,18 @@ class Phone(object) :
 			''' determine number of APs '''
 			num_aps=int(wifi_scan_data.split('|')[4])
 			i=0
-			bss_list =[wifi_scan_data.split('|')[2]]
-			rssi_list=[int(wifi_scan_data.split('|')[3])]
+			ap_name=wifi_scan_data.split('|')[2]
+			bss_list=[]
+			rssi_list=[]
+			if (ap_name != 'null') : # invalid AP
+				bss_list =[ap_name]
+				rssi_list=[int(wifi_scan_data.split('|')[3])]
 			for i in range(0,num_aps) :
 				next_ap_data=wifi_scan_data.split('|')[6+4*i:6+4*i+4]
-				bss_list+=[next_ap_data[1]];
-				rssi_list+=[int(next_ap_data[2])];
+				ap_name=next_ap_data[1];
+				if (ap_name!='null') : # invalid AP
+					bss_list+=[ap_name];
+					rssi_list+=[int(next_ap_data[2])];
 			assert(len(bss_list)==len(rssi_list))	
 			self.wifi_list+=[WiFi(bss_list,rssi_list,time_stamp,gnd_truth)]
 			
@@ -146,6 +152,8 @@ class Phone(object) :
 			num_bs=int(gsm_scan_data.split('|')[6])
 			i=0
 			rssi=int(gsm_scan_data.split('|')[2])
+			bs_list=[]
+			rssi_list=[]
 			if (rssi != 99) : # invalid RSSI
 				bs_list =[gsm_scan_data.split('|')[0]]
 				rssi_list=[rssi]
