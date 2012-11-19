@@ -3,6 +3,10 @@ Each of these traces should have data from ALL the sensors. So, you should cat t
 
 This is what should be done :
 
+0. Train classifier on equal amounts of static, walking, running, biking and driving. Figure out manually how to get these equal amounts in the first place. To run train-classifier, use :
+
+python train-classifier.py accel.out wifi.out gps.out gsm.out geo_loc.out  1> /dev/null 2> classifier.model
+
 1. Create template traces for each activity
 =============================================
 
@@ -20,4 +24,4 @@ python stitch-traces.py 1000000 Tiffany-static.out Tiffany-walking.out Chern-run
 3. Feed stitched trace output (which is written to disk as a separate file for each sensor) into eval-classifier.py
 =================================================================================================================
 
-python eval-classifier.py stitched-Accel.out stitched-Wifi.out stitched-GPS.out stitched-GSM.out stitched-Geo\ Loc.out power.py
+python eval-classifier.py stitched-Accel.out stitched-Wifi.out stitched-GPS.out stitched-GSM.out stitched-Geo\ Loc.out power.py classifier.model 1> /dev/null
