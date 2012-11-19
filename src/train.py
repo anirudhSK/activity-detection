@@ -10,8 +10,8 @@ class Train(object) :
 
 	''' Windowing primitives '''
 	last_print_out=-1
-	WINDOW_IN_SECONDS=5
-	SHIFT_TIME=1
+	WINDOW_IN_MILLI_SECONDS=5000
+	SHIFT_TIME_MILLI_SECONDS=1000
 	current_window=[]
 
 	''' Data required for ML estimates for each label '''
@@ -41,9 +41,9 @@ class Train(object) :
 			print "\n"
 			''' compute accel magnitude and keep track of windows '''
 			accel_mag=sqrt(sensor_reading.accel_x**2+sensor_reading.accel_y**2+sensor_reading.accel_z**2)
-		        self.current_window=filter(lambda x : x[0] >=  current_time - self.WINDOW_IN_SECONDS,self.current_window)
+		        self.current_window=filter(lambda x : x[0] >=  current_time - self.WINDOW_IN_MILLI_SECONDS,self.current_window)
 		        self.current_window+=[(current_time,accel_mag)]
-			if (current_time - self.last_print_out >= self.SHIFT_TIME) :
+			if (current_time - self.last_print_out >= self.SHIFT_TIME_MILLI_SECONDS) :
 				''' variance and mean feature vector components '''
 				(mean,variance)=self.mean_and_var(map(lambda x : x[1],self.current_window));
 				sigma=sqrt(variance)
@@ -86,7 +86,7 @@ class Train(object) :
 		''' Print out any training relevant information to a file '''
 		''' In this case, it is the mean and sigma for each distribution '''
 		for i in range(0,5) : # all labels
-			print>>sys.stderr,"Label ",i," mean_dist ",Positive_Normal(self.mean_stats[i])
-			print>>sys.stderr,"label ",i," sigma_dist ",Positive_Normal(self.sigma_stats[i])
-			print>>sys.stderr,"label ",i," peak_freq_dist ",Positive_Normal(self.peak_freq_stats[i])
-			print>>sys.stderr,"label ",i," strength_var_dist ",Positive_Normal(self.strength_var_stats[i])
+			print>>sys.stderr,"self.mean_fv_dist["+str(i)+"]=Positive_Normal("+str(Positive_Normal(self.mean_stats[i]).mean)+","+str(Positive_Normal(self.mean_stats[i]).sigma)+")"
+			print>>sys.stderr,"self.sigma_fv_dist["+str(i)+"]=Positive_Normal("+str(Positive_Normal(self.sigma_stats[i]).mean)+","+str(Positive_Normal(self.sigma_stats[i]).sigma)+")"
+			print>>sys.stderr,"self.peak_freq_fv_dist["+str(i)+"]=Positive_Normal("+str(Positive_Normal(self.peak_freq_stats[i]).mean)+","+str(Positive_Normal(self.peak_freq_stats[i]).sigma)+")"
+			print>>sys.stderr,"self.strength_var_fv_dist["+str(i)+"]=Positive_Normal("+str(Positive_Normal(self.strength_var_stats[i]).mean)+","+str(Positive_Normal(self.strength_var_stats[i]).sigma)+")"

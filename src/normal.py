@@ -13,8 +13,14 @@ class Positive_Normal :
 		mean=reduce(lambda acc,update : acc + update,value_list,0.0)/len(value_list)
 		return (mean,meanSq-mean*mean)
 
-	def __init__ (self,value_list=None) :
+	def __init__ (self,*args) :
 		''' Poor man's ML estimation, Ref. to Cohen (1950) for the real thing '''
+		if (len(args)==2) :
+			self.mean=args[0]
+			self.sigma=args[1]
+			return
+		else :
+			value_list=args[0]
 		if (value_list==None) :
 			return
 		(self.mean,variance)=self.mean_and_var(value_list)
