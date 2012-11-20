@@ -25,3 +25,9 @@ python stitch-traces.py 1000000 Tiffany-static.out Tiffany-walking.out Chern-run
 =================================================================================================================
 
 python eval-classifier.py stitched-Accel.out stitched-Wifi.out stitched-GPS.out stitched-GSM.out stitched-Geo\ Loc.out power.py classifier.model 1> /dev/null
+
+
+Note about timestamps :
+================================================
+	1. sampling rates are now in samples per millisecond.
+	2. Energy is in Joules per millisecond, to make sure everything is in milliseconds (which can be treated as an integer).

@@ -2,6 +2,7 @@
 # generate classification stats
 from interval import *
 from distributions import *
+import sys
 class Stats(object) :
 	gnd_truth=[]		# list of time, gnd_truth pairs
 	classifier_output=[]	# list of time, classifier output pairs
@@ -37,7 +38,18 @@ class Stats(object) :
 				total_time+=overlap
 		return float(correct_match_time) / ( total_time )
 	def latency_stats(self):# compute latency of detection
-		return [] 	# TODO
+		''' find transition points in gnd truth by creating an interval list '''
+		gnd_truth_list=self.interval_list(self.gnd_truth)
+		for gnd_truth_interval in gnd_truth_list : # for each activity
+			classifier_filtered=filter(lambda x : (x[0] >= gnd_truth_interval.start) and (x[0] <= gnd_truth_interval.start + 300*1000), self.classifier_output) # search 300000 ms forward
+			for i in range(0,len(classifier_filtered)) :
+				consecutive_outputs=classifier_filtered[i:i+10] # check if 10 outputs "hold" our value
+				is_detected=reduce(lambda acc,update : acc and update[1].mode()==gnd_truth_interval.distribution.mode(),consecutive_outputs,True)
+				if (is_detected) :
+					latency=classifier_filtered[i][0]-gnd_truth_interval.start
+					actual_label=gnd_truth_interval.distribution.mode()
+					print>>sys.stderr,"Activity:",actual_label," starts @ ",gnd_truth_interval.start," Latency: ",latency," ms with ",len(consecutive_outputs)," samples"
+					break;
 	def energy_stats(self): # compute energy cost of detection over the entire trace
 		accel_sampling_intervals=sampling_intervals[0]
 		wifi_sampling_intervals=sampling_intervals[1]

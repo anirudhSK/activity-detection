@@ -1,17 +1,8 @@
-1. Write the latency calculation code.
-
-2. If possible :
+1. If possible :
 =======================
 Allow the simulator to swap in different implementations of the classifier automatically. Now it can be done manually.
 
-3. Data structures that have random values for now :
+2. Data structures that have random values for now :
 =======================
 	1. Markov  transition rate matrix in stitch-traces.py
-	2. Input traces to train-classifier need to be clean and need to be spread out across all labels equally to avoid bias.
-	3. Input traces to eval-classifier need to be clean as well.
-	4. Energy values are totally random for now. Besides, we need to convert sampling rate to integer or some such discrete repr.
-
-4 Timestamps :
-=============================
-	1. sampling rates are now in samples per millisecond.
-	2. Energy is in Joules per millisecond, to make sure everything is in milliseconds (which can be treated as an integer).
+	2. Energy values are totally random for now.
