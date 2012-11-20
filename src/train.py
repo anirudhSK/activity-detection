@@ -38,7 +38,7 @@ class Train(object) :
 
 	def callback(self,sensor_reading,current_time,gnd_truth) :
 		if (isinstance(sensor_reading,Accel)) :
-			print "\n"
+			#print "\n"
 			''' compute accel magnitude and keep track of windows '''
 			accel_mag=sqrt(sensor_reading.accel_x**2+sensor_reading.accel_y**2+sensor_reading.accel_z**2)
 		        self.current_window=filter(lambda x : x[0] >=  current_time - self.WINDOW_IN_MILLI_SECONDS,self.current_window)
@@ -47,7 +47,7 @@ class Train(object) :
 				''' variance and mean feature vector components '''
 				(mean,variance)=self.mean_and_var(map(lambda x : x[1],self.current_window));
 				sigma=sqrt(variance)
-				print "Mean, sigma ",mean,sigma
+				#print "Mean, sigma ",mean,sigma
 				self.mean_stats[gnd_truth]+=[mean]
 				self.sigma_stats[gnd_truth]+=[sigma]
 
@@ -62,7 +62,7 @@ class Train(object) :
 					peak_freq=((peak_freq_index)/(N* 1.0)) * sampling_freq
 					nyquist_freq=sampling_freq/2.0;
 					assert ( peak_freq <= nyquist_freq );
-					print "Peak_freq ",peak_freq," Hz"
+					#print "Peak_freq ",peak_freq," Hz"
 					self.peak_freq_stats[gnd_truth]+=[peak_freq]
 
 				''' Strength variation '''
@@ -79,7 +79,7 @@ class Train(object) :
 					sigma_summit=sqrt(self.mean_and_var(map(lambda x : x[1],summits))[1]);
 				if ( len(valleys) != 0 ) :
 					sigma_valley=sqrt(self.mean_and_var(map(lambda x : x[1],valleys))[1]);
-				print "Strength variation ", sigma_valley+sigma_summit
+				#print "Strength variation ", sigma_valley+sigma_summit
 				self.strength_var_stats[gnd_truth]+=[sigma_valley+sigma_summit]
 
 	def output_classifer(self) :

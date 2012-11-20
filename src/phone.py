@@ -119,6 +119,11 @@ class Phone(object) :
 				rssi_list=[int(wifi_scan_data.split('|')[3])]
 			for i in range(0,num_aps) :
 				next_ap_data=wifi_scan_data.split('|')[6+4*i:6+4*i+4]
+				
+				''' Modified '''
+				if len(next_ap_data) < 2:
+					continue
+				''' Modified '''
 				ap_name=next_ap_data[1];
 				if (ap_name!='null') : # invalid AP
 					bss_list+=[ap_name];
@@ -153,6 +158,9 @@ class Phone(object) :
 				rssi_list=[rssi]
 			for i in range(0,num_bs) :
 				next_bs_data=gsm_scan_data.split('|')[7+3*i:7+3*i+3]
+				''' Modified '''
+				if len(next_bs_data) < 3:
+					continue
 				rssi=int(next_bs_data[2])
 				if (rssi != 99) : # invalid RSSI
 					bs_list+=[next_bs_data[0]];
@@ -191,7 +199,7 @@ class Phone(object) :
 				classifier.callback(current_event,current_event.time_stamp)
 				''' update current time now '''
 				self.current_time=current_event.time_stamp;
-				print "Current time is ",current_event.time_stamp, " ms, reading is ",current_event
+				#print "Current time is ",current_event.time_stamp, " ms, reading is ",current_event
 		self.cleanup()
 		return (self.accel_sampling_intervals,self.wifi_sampling_intervals,self.gps_sampling_intervals,self.gsm_sampling_intervals,self.nwk_loc_sampling_intervals)
 

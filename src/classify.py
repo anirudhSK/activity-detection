@@ -19,12 +19,12 @@ class Classify(object) :
 	peak_freq_fv_dist=[0]*5
 	strength_var_fv_dist=[0]*5
 
-	def __init__(self,sim_phone,classifier_model) :
+	def __init__(self,sim_phone,classifier_model,sampling_interval) :
 		self.sim_phone=sim_phone
 		self.classifier_output=[]
 
 		''' set initial sampling intervals in milliseconds '''
-		sim_phone.change_accel_interval(10)
+		sim_phone.change_accel_interval(sampling_interval)
 		sim_phone.change_wifi_interval(1000)
 		sim_phone.change_gps_interval(1000)
 		sim_phone.change_gsm_interval(1000)
@@ -52,7 +52,7 @@ class Classify(object) :
 	def callback(self,sensor_reading,current_time) :
 		''' Interface to simulator :  Leave final result as (timestamp,output_distribution) pairs in classifier_output '''
 		if (isinstance(sensor_reading,Accel)) :
-			print "\n"
+			#print "\n"
 			''' compute accel magnitude and keep track of windows '''
 			accel_mag=sqrt(sensor_reading.accel_x**2+sensor_reading.accel_y**2+sensor_reading.accel_z**2)
 		        self.current_window=filter(lambda x : x[0] >=  current_time - self.WINDOW_IN_MILLI_SECONDS,self.current_window)
@@ -61,7 +61,7 @@ class Classify(object) :
 				''' variance and mean feature vector components '''
 				(mean,variance)=self.mean_and_var(map(lambda x : x[1],self.current_window));
 				sigma=sqrt(variance)
-				print "Mean, sigma ",mean,sigma
+				#print "Mean, sigma ",mean,sigma
 
 				''' Peak frequency, compute DFT first on accel magnitudes '''
 				current_dft=rfft(map(lambda x : x[1] , self.current_window))
@@ -75,7 +75,7 @@ class Classify(object) :
 					peak_freq=((peak_freq_index)/(N* 1.0)) * sampling_freq
 					nyquist_freq=sampling_freq/2.0;
 					assert ( peak_freq <= nyquist_freq );
-					print "Peak_freq ",peak_freq," Hz"
+					#print "Peak_freq ",peak_freq," Hz"
 
 				''' Strength variation '''
 				summits=[]
@@ -91,5 +91,5 @@ class Classify(object) :
 					sigma_summit=sqrt(self.mean_and_var(map(lambda x : x[1],summits))[1]);
 				if ( len(valleys) != 0 ) :
 					sigma_valley=sqrt(self.mean_and_var(map(lambda x : x[1],valleys))[1]);
-				print "Strength variation ", sigma_valley+sigma_summit
+				#print "Strength variation ", sigma_valley+sigma_summit
 				self.classifier_output.append((current_time,self.predict_label(mean,sigma,peak_freq,sigma_valley+sigma_summit)))
