@@ -51,11 +51,11 @@ class Stats(object) :
 					print>>sys.stderr,"Activity:",actual_label," starts @ ",gnd_truth_interval.start," Latency: ",latency," ms with ",len(consecutive_outputs)," samples"
 					break;
 	def energy_stats(self): # compute energy cost of detection over the entire trace
-		accel_sampling_intervals=sampling_intervals[0]
-		wifi_sampling_intervals=sampling_intervals[1]
-		gps_sampling_intervals=sampling_intervals[2]
-		gsm_sampling_intervals=sampling_intervals[3]
-		nwk_loc_sampling_intervals=sampling_intervals[4]
+		accel_sampling_intervals  =self.sampling_intervals[0]
+		wifi_sampling_intervals   =self.sampling_intervals[1]
+		gps_sampling_intervals    =self.sampling_intervals[2]
+		gsm_sampling_intervals    =self.sampling_intervals[3]
+		nwk_loc_sampling_intervals=self.sampling_intervals[4]
 		energy=0
 		for i in range(0,len(accel_sampling_intervals)-1) :
 			energy+=self.power_accel[accel_sampling_intervals[i][1]]*(accel_sampling_intervals[i+1][0]-accel_sampling_intervals[i][0])
@@ -65,7 +65,7 @@ class Stats(object) :
 			energy+=self.power_gps[gps_sampling_intervals[i][1]]*(gps_sampling_intervals[i+1][0]-gps_sampling_intervals[i][0])
 		for i in range(0,len(gsm_sampling_intervals)-1) :
 			energy+=self.power_gsm[gsm_sampling_intervals[i][1]]*(gsm_sampling_intervals[i+1][0]-gsm_sampling_intervals[i][0])
-		for i in range(0,len(accel_sampling_intervals)-1) :
+		for i in range(0,len(nwk_loc_sampling_intervals)-1) :
 			energy+=self.power_nwk_loc[nwk_loc_sampling_intervals[i][1]]*(nwk_loc_sampling_intervals[i+1][0]-nwk_loc_sampling_intervals[i][0])
 		return energy	
 	def interval_list(self,time_series) :
