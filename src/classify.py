@@ -5,6 +5,7 @@ from numpy.fft import *
 import numpy
 from normal import *
 from distributions import *
+import sys
 # classify based on traces
 class Classify(object) :
 	''' Windowing primitives '''
@@ -40,9 +41,9 @@ class Classify(object) :
 
 	def predict_label(self,mean_fv,sigma_fv,peak_freq_fv,strength_var_fv) :
 		''' Predict the label given the mean, sigma, peak frequency and strength variation components of the feature vector '''
-		likelihood=[0]*5
+		likelihood=[sys.float_info.min]*5
 		for label in range(0,5) :
-			likelihood[label] = (self.mean_fv_dist[label].pdf(mean_fv))   * (self.sigma_fv_dist[label].pdf(sigma_fv)) * (self.peak_freq_fv_dist[label].pdf(peak_freq_fv)) * (self.strength_var_fv_dist[label].pdf(strength_var_fv))
+			likelihood[label] += (self.mean_fv_dist[label].pdf(mean_fv))   * (self.sigma_fv_dist[label].pdf(sigma_fv)) * (self.peak_freq_fv_dist[label].pdf(peak_freq_fv)) * (self.strength_var_fv_dist[label].pdf(strength_var_fv))
 		posterior_pmf=[0]*5
 		for label in range(0,5) :
 			posterior_pmf[label]=likelihood[label]/sum(likelihood)
