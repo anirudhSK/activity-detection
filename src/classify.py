@@ -10,7 +10,6 @@ class Classify(object) :
 	''' Windowing primitives '''
 	last_print_out=-1
 	WINDOW_IN_MILLI_SECONDS=5000
-	SHIFT_TIME_MILLI_SECONDS=1000
 	current_window=[]
 
 	''' parameters of distributions used for Naive Bayes prediction '''
@@ -57,39 +56,38 @@ class Classify(object) :
 			accel_mag=sqrt(sensor_reading.accel_x**2+sensor_reading.accel_y**2+sensor_reading.accel_z**2)
 		        self.current_window=filter(lambda x : x[0] >=  current_time - self.WINDOW_IN_MILLI_SECONDS,self.current_window)
 		        self.current_window+=[(current_time,accel_mag)]
-			if (current_time - self.last_print_out >= self.SHIFT_TIME_MILLI_SECONDS) :
-				''' variance and mean feature vector components '''
-				(mean,variance)=self.mean_and_var(map(lambda x : x[1],self.current_window));
-				sigma=sqrt(variance)
-				#print "Mean, sigma ",mean,sigma
+			''' variance and mean feature vector components '''
+			(mean,variance)=self.mean_and_var(map(lambda x : x[1],self.current_window));
+			sigma=sqrt(variance)
+			#print "Mean, sigma ",mean,sigma
 
-				''' Peak frequency, compute DFT first on accel magnitudes '''
-				current_dft=rfft(map(lambda x : x[1] , self.current_window))
-				peak_freq=0 # TODO Find a better way of doing this.
-				if (len(current_dft) > 1) :
-					''' ignore DC component '''
-					peak_freq_index=numpy.abs(current_dft[1:]).argmax() + 1;
-					''' sampling_frequency '''
-					N=float(len(self.current_window))
-					sampling_freq=N/(self.current_window[-1][0]-self.current_window[0][0])
-					peak_freq=((peak_freq_index)/(N* 1.0)) * sampling_freq
-					nyquist_freq=sampling_freq/2.0;
-					assert ( peak_freq <= nyquist_freq );
-					#print "Peak_freq ",peak_freq," Hz"
+			''' Peak frequency, compute DFT first on accel magnitudes '''
+			current_dft=rfft(map(lambda x : x[1] , self.current_window))
+			peak_freq=0 # TODO Find a better way of doing this.
+			if (len(current_dft) > 1) :
+				''' ignore DC component '''
+				peak_freq_index=numpy.abs(current_dft[1:]).argmax() + 1;
+				''' sampling_frequency '''
+				N=float(len(self.current_window))
+				sampling_freq=N/(self.current_window[-1][0]-self.current_window[0][0])
+				peak_freq=((peak_freq_index)/(N* 1.0)) * sampling_freq
+				nyquist_freq=sampling_freq/2.0;
+				assert ( peak_freq <= nyquist_freq );
+				#print "Peak_freq ",peak_freq," Hz"
 
-				''' Strength variation '''
-				summits=[]
-				valleys=[]
-				sigma_summit=0
-				sigma_valley=0
-				for i in range(1,len(self.current_window)-1) :
-					if ( (self.current_window[i][1] >= self.current_window[i+1][1]) and (self.current_window[i][1] >= self.current_window[i-1][1]) ) :
-						summits+=[self.current_window[i]]
-					if ( (self.current_window[i][1] <= self.current_window[i+1][1]) and (self.current_window[i][1] <= self.current_window[i-1][1]) ) :
-						valleys+=[self.current_window[i]]
-				if ( len(summits) != 0 ) :
-					sigma_summit=sqrt(self.mean_and_var(map(lambda x : x[1],summits))[1]);
-				if ( len(valleys) != 0 ) :
-					sigma_valley=sqrt(self.mean_and_var(map(lambda x : x[1],valleys))[1]);
-				#print "Strength variation ", sigma_valley+sigma_summit
-				self.classifier_output.append((current_time,self.predict_label(mean,sigma,peak_freq,sigma_valley+sigma_summit)))
+			''' Strength variation '''
+			summits=[]
+			valleys=[]
+			sigma_summit=0
+			sigma_valley=0
+			for i in range(1,len(self.current_window)-1) :
+				if ( (self.current_window[i][1] >= self.current_window[i+1][1]) and (self.current_window[i][1] >= self.current_window[i-1][1]) ) :
+					summits+=[self.current_window[i]]
+				if ( (self.current_window[i][1] <= self.current_window[i+1][1]) and (self.current_window[i][1] <= self.current_window[i-1][1]) ) :
+					valleys+=[self.current_window[i]]
+			if ( len(summits) != 0 ) :
+				sigma_summit=sqrt(self.mean_and_var(map(lambda x : x[1],summits))[1]);
+			if ( len(valleys) != 0 ) :
+				sigma_valley=sqrt(self.mean_and_var(map(lambda x : x[1],valleys))[1]);
+			#print "Strength variation ", sigma_valley+sigma_summit
+			self.classifier_output.append((current_time,self.predict_label(mean,sigma,peak_freq,sigma_valley+sigma_summit)))
