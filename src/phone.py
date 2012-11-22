@@ -70,24 +70,34 @@ class Phone(object) :
 
 	''' Methods to change sampling interval '''
 	def change_accel_interval(self,accel_interval):
+		if( self.accel_interval == accel_interval ) :
+			return
 		self.accel_interval=accel_interval
-		self.next_accel_timestamp=self.current_time
+		self.next_accel_timestamp=self.current_time+self.accel_interval
 		self.accel_sampling_intervals.append((self.current_time,self.accel_interval));
 	def change_wifi_interval(self,wifi_interval):
+		if( self.wifi_interval == wifi_interval ) :
+			return
 		self.wifi_interval=wifi_interval
-		self.next_wifi_timestamp=self.current_time
+		self.next_wifi_timestamp=self.current_time+self.wifi_interval
 		self.wifi_sampling_intervals.append((self.current_time,self.wifi_interval));		
 	def change_gps_interval(self,gps_interval):
+		if( self.gps_interval == gps_interval ) :
+			return
 		self.gps_interval=gps_interval
-		self.next_gps_timestamp=self.current_time
+		self.next_gps_timestamp=self.current_time+self.gps_interval
 		self.gps_sampling_intervals.append((self.current_time,self.gps_interval));
 	def change_gsm_interval(self,gsm_interval):
+		if( self.gsm_interval == gsm_interval ) :
+			return
 		self.gsm_interval=gsm_interval
-		self.next_gsm_timestamp=self.current_time
+		self.next_gsm_timestamp=self.current_time+self.gsm_interval
 		self.gsm_sampling_intervals.append((self.current_time,self.gsm_interval));
 	def change_nwk_loc_interval(self,nwk_loc_interval) :
+		if( self.nwk_loc_interval == nwk_loc_interval ) :
+			return
 		self.nwk_loc_interval=nwk_loc_interval
-		self.next_nwk_loc_timestamp=self.current_time
+		self.next_nwk_loc_timestamp=self.current_time+self.nwk_loc_interval
 		self.nwk_loc_sampling_intervals.append((self.current_time,self.nwk_loc_interval));
 
 
