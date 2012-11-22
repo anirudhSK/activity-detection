@@ -17,7 +17,7 @@ if __name__ == "__main__" :
 	nwk_loc_trace=sys.argv[5]
 	power_model=sys.argv[6]
 	classifier_model=sys.argv[7]
-	sampling_interval = float(sys.argv[8])
+	sampling_interval = int(sys.argv[8])
 	''' Initialize phone object '''
 	sim_phone=Phone(accel_trace,wifi_trace,gps_trace,gsm_trace,nwk_loc_trace)
 	''' Initialize classifier object '''

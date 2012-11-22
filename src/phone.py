@@ -181,7 +181,7 @@ class Phone(object) :
 	def run_classifier(self,classifier) :
 		# main event loop of trace driven simulation
 		''' Write into sampling rate vectors before starting '''
-		self.current_time=self.event_list[0]
+		self.current_time=self.event_list[0].time_stamp
 		self.accel_sampling_intervals.append((self.current_time,self.accel_interval));
 		self.wifi_sampling_intervals.append((self.current_time,self.wifi_interval));
 		self.gps_sampling_intervals.append((self.current_time,self.gps_interval));
