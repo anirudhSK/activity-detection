@@ -13,6 +13,8 @@ class Accel(object) :
 		self.gnd_truth=gnd_truth
 	def __str__(self) :
 		return "Accel: "+str(self.time_stamp)+" ms \t"+str(self.gnd_truth)+"\t"+str(self.accel_x)+"\t"+str(self.accel_y)+"\t"+str(self.accel_z)
+	def __repr__(self) :
+		return self.__str__()
 
 class WiFi(object) :
 	ap_list=[]
@@ -27,6 +29,8 @@ class WiFi(object) :
 		self.gnd_truth=gnd_truth
 	def __str__(self) :
 		return "WiFi: "+str(self.time_stamp)+" ms \t"+str(self.gnd_truth)+"\t"+str(self.ap_list)+"\t"+str(self.rssi_list)
+	def __repr__(self) :
+		return self.__str__()
 
 class GPS(object) :
 	lat=0
@@ -40,6 +44,8 @@ class GPS(object) :
 		self.gnd_truth=gnd_truth
 	def __str__(self) :
 		return "GPS: "+str(self.time_stamp)+" ms \t"+str(self.gnd_truth)+"\t"+str(self.lat)+"\t"+str(self.lon)
+	def __repr__(self) :
+		return self.__str__()
 
 class GSM(object) :
 	cell_tower_list=[]
@@ -54,6 +60,8 @@ class GSM(object) :
 		self.gnd_truth=gnd_truth
 	def __str__(self) :
 		return "GSM: "+str(self.time_stamp)+" ms \t"+str(self.gnd_truth)+"\t"+str(self.cell_tower_list)+"\t"+str(self.rssi_list)
+	def __repr__(self) :
+		return self.__str__()
 
 class NwkLoc(object) :
 	lat=0
@@ -67,3 +75,5 @@ class NwkLoc(object) :
 		self.gnd_truth=gnd_truth
 	def __str__(self) :
 		return "NwkLoc: "+str(self.time_stamp)+" ms \t"+str(self.gnd_truth)+"\t"+str(self.lat)+"\t"+str(self.lon)
+	def __repr__(self) :
+		return self.__str__()
