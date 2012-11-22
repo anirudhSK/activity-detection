@@ -6,12 +6,17 @@ import numpy
 from normal import *
 from distributions import *
 import sys
+import operator
 # classify based on traces
 class Classify(object) :
 	''' Windowing primitives '''
-	last_print_out=-1
 	WINDOW_IN_MILLI_SECONDS=5000
 	current_window=[]
+
+	''' Energy adapataion '''
+	last_energy_update=0  # assume that time starts from 0 in the stitched traces
+	current_sampling_interval=1000
+	energy_consumed=0
 
 	''' parameters of distributions used for Naive Bayes prediction '''
 	mean_fv_dist=[0]*5
@@ -24,6 +29,7 @@ class Classify(object) :
 		self.classifier_output=[]
 
 		''' set initial sampling intervals in milliseconds '''
+		self.current_sampling_interval=sampling_interval
 		sim_phone.change_accel_interval(sampling_interval)
 		sim_phone.change_wifi_interval(1000)
 		sim_phone.change_gps_interval(1000)
@@ -91,4 +97,34 @@ class Classify(object) :
 			if ( len(valleys) != 0 ) :
 				sigma_valley=sqrt(self.mean_and_var(map(lambda x : x[1],valleys))[1]);
 			#print "Strength variation ", sigma_valley+sigma_summit
-			self.classifier_output.append((current_time,self.predict_label(mean,sigma,peak_freq,sigma_valley+sigma_summit)))
+			posterior_dist=self.predict_label(mean,sigma,peak_freq,sigma_valley+sigma_summit)
+			self.classifier_output.append((current_time,posterior_dist))
+			
+			# Arbitrary values for unit test :
+			energy_budget=230020200303
+			total_time=1000000 #ms
+			power_accel={ 10: 2000, 20:1500, 100: 343 ,330: 300, 1000:233 }
+			callback_list=[0,1];
+			self.energy_adapt(current_time, energy_budget, total_time, power_accel, callback_list, posterior_dist.pmf)
+			self.last_energy_update=current_time
+		
+	def energy_adapt (self, current_time, energy_budget, total_time, power_accel, callback_list, posterior_pmf) :
+			''' Vary sampling rate to adapt to energy constraints '''
+			self.energy_consumed += (current_time-self.last_energy_update) * power_accel[self.current_sampling_interval]
+			remaining_power=(energy_budget-self.energy_consumed)*1.0/(total_time-current_time)
+			do_i_ramp_up=reduce(lambda acc, update : acc or (posterior_pmf[update] >= 0.2), callback_list ,False); 
+			if (do_i_ramp_up) :
+				min_interval=self.current_sampling_interval
+				for candidate_interval in power_accel :
+					if ((power_accel[candidate_interval] < remaining_power) and (candidate_interval < min_interval)) :
+						min_interval=candidate_interval
+				# limit sampling interval to 20ms or 50Hz
+				self.current_sampling_interval=max(20,min_interval);
+				self.sim_phone.change_accel_interval(self.current_sampling_interval)
+				return
+			# ramp down if required
+			if (( power_accel[self.current_sampling_interval] > remaining_power)) :
+				# pick sampling interval with minimum power
+				self.current_sampling_interval = sorted(power_accel.iteritems(), key=operator.itemgetter(1))[0][0]
+				self.sim_phone.change_accel_interval(self.current_sampling_interval)
+				return

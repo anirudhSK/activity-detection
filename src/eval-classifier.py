@@ -37,3 +37,4 @@ if __name__ == "__main__" :
 	fh=open("gnd.plot","w");
 	for output in sim_phone.gnd_truth :
 		fh.write(str(output[0])+"\t"+str(output[1].mode())+"\n");
+	print>>sys.stderr,"Energy consumption ",statistics.energy_stats()," Joules ";
