@@ -18,6 +18,7 @@ class Classify(object) :
 	current_sampling_interval=1000
 	energy_consumed=0
 	energy_budget=0
+	time_limit=0
 
 	''' power stats for each phone '''
 	power_accel=dict()
@@ -32,12 +33,13 @@ class Classify(object) :
 	peak_freq_fv_dist=[0]*5
 	strength_var_fv_dist=[0]*5
 
-	def __init__(self,sim_phone,classifier_model,power_model,energy_budget) :
+	def __init__(self,sim_phone,classifier_model,power_model,energy_budget,time_limit) :
 		self.sim_phone=sim_phone
 		self.classifier_output=[]
 
 		execfile(power_model)
 		self.energy_budget=energy_budget		
+		self.time_limit=time_limit
 
 		''' set initial sampling intervals in milliseconds '''
 		self.current_sampling_interval=max(self.power_accel.keys())
@@ -112,9 +114,8 @@ class Classify(object) :
 			self.classifier_output.append((current_time,posterior_dist))
 			
 			# Arbitrary values for unit test :
-			total_time=1000000 #ms
 			callback_list=[0,1,2,3,4];
-			self.energy_adapt(current_time, self.energy_budget, total_time, self.power_accel, callback_list, posterior_dist.pmf)
+			self.energy_adapt(current_time, self.energy_budget, self.time_limit, self.power_accel, callback_list, posterior_dist.pmf)
 			self.last_energy_update=current_time
 		
 	def energy_adapt (self, current_time, energy_budget, total_time, power_accel, callback_list, posterior_pmf) :

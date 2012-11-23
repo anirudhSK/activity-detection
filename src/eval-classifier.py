@@ -7,8 +7,8 @@ from classify import *
 from phone import *
 from stats import *
 if __name__ == "__main__" :
-	if ( len(sys.argv) < 9 ) :
-		print "Usage: ",sys.argv[0]," accel_trace wifi_trace gps_trace gsm_trace nwk_loc_trace power_model classifier_model energy_budget(Joules) "
+	if ( len(sys.argv) < 10 ) :
+		print "Usage: ",sys.argv[0]," accel_trace wifi_trace gps_trace gsm_trace nwk_loc_trace power_model classifier_model energy_budget(Joules) time_limit(milliseconds) "
 		exit(5)
 	accel_trace=sys.argv[1]
 	wifi_trace=sys.argv[2]
@@ -18,10 +18,11 @@ if __name__ == "__main__" :
 	power_model=sys.argv[6]
 	classifier_model=sys.argv[7]
 	energy_budget=float(sys.argv[8])
+	time_limit=int(sys.argv[9])
 	''' Initialize phone object '''
 	sim_phone=Phone(accel_trace,wifi_trace,gps_trace,gsm_trace,nwk_loc_trace)
 	''' Initialize classifier object '''
-	classifier=Classify(sim_phone,classifier_model,power_model,energy_budget)
+	classifier=Classify(sim_phone,classifier_model,power_model,energy_budget,time_limit)
 	''' run classifier on phone '''
 	sampling_rate_vector=sim_phone.run_classifier(classifier)
 	''' print statistics '''
