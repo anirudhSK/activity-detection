@@ -17,6 +17,14 @@ class Classify(object) :
 	last_energy_update=0  # assume that time starts from 0 in the stitched traces
 	current_sampling_interval=1000
 	energy_consumed=0
+	energy_budget=0
+
+	''' power stats for each phone '''
+	power_accel=dict()
+	power_wifi=dict()
+	power_gps=dict()
+	power_gsm=dict()
+	power_nwk_loc=dict()
 
 	''' parameters of distributions used for Naive Bayes prediction '''
 	mean_fv_dist=[0]*5
@@ -24,17 +32,20 @@ class Classify(object) :
 	peak_freq_fv_dist=[0]*5
 	strength_var_fv_dist=[0]*5
 
-	def __init__(self,sim_phone,classifier_model,sampling_interval) :
+	def __init__(self,sim_phone,classifier_model,power_model,energy_budget) :
 		self.sim_phone=sim_phone
 		self.classifier_output=[]
 
+		execfile(power_model)
+		self.energy_budget=energy_budget		
+
 		''' set initial sampling intervals in milliseconds '''
-		self.current_sampling_interval=sampling_interval
-		sim_phone.change_accel_interval(sampling_interval)
-		sim_phone.change_wifi_interval(1000)
-		sim_phone.change_gps_interval(1000)
-		sim_phone.change_gsm_interval(1000)
-		sim_phone.change_nwk_loc_interval(1000)
+		self.current_sampling_interval=max(self.power_accel.keys())
+		sim_phone.change_accel_interval(max(self.power_accel.keys()))
+		sim_phone.change_wifi_interval(max(self.power_wifi.keys()))
+		sim_phone.change_gps_interval(max(self.power_gps.keys()))
+		sim_phone.change_gsm_interval(max(self.power_gsm.keys()))
+		sim_phone.change_nwk_loc_interval(max(self.power_nwk_loc.keys()))
 
 		execfile(classifier_model)
 		
@@ -101,18 +112,16 @@ class Classify(object) :
 			self.classifier_output.append((current_time,posterior_dist))
 			
 			# Arbitrary values for unit test :
-			energy_budget=1899000000
 			total_time=1000000 #ms
-			power_accel={ 10: 2000, 12:1899.001, 15:1899, 20:1895, 100: 343 ,330: 300, 1000:233 }
 			callback_list=[0,1,2,3,4];
-			self.energy_adapt(current_time, energy_budget, total_time, power_accel, callback_list, posterior_dist.pmf)
+			self.energy_adapt(current_time, self.energy_budget, total_time, self.power_accel, callback_list, posterior_dist.pmf)
 			self.last_energy_update=current_time
 		
 	def energy_adapt (self, current_time, energy_budget, total_time, power_accel, callback_list, posterior_pmf) :
 			''' Vary sampling rate to adapt to energy constraints '''
 			self.energy_consumed += (current_time-self.last_energy_update) * power_accel[self.current_sampling_interval]
 			remaining_power=(energy_budget-self.energy_consumed)*1.0/(total_time-current_time)
-			print "Current sampling interval is ",self.current_sampling_interval," remaining power is ",remaining_power
+			print "Current sampling interval is ",self.current_sampling_interval," remaining power is ",remaining_power," Joules per millisecond "
 			# ramp down if required
 			if (( power_accel[self.current_sampling_interval] > remaining_power)) :
 				# pick the sampling interval with the max power which is less than remaining_power
