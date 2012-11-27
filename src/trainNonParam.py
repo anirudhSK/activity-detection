@@ -6,6 +6,7 @@ from numpy.fft import *
 import numpy
 from normal import *
 import sys
+import pickle
 class  Train(object) :
 
 	''' Windowing primitives '''
@@ -15,7 +16,7 @@ class  Train(object) :
 	
 	''' Data required for ML estimates for each label '''
 	''' Key to the hash table is the label number '''
-	activity_templates = [[]]*5
+	activity_templates = [[] for _ in range(5)]
 
 	def __init__(self,sim_phone) :
 		self.sim_phone=sim_phone
@@ -41,4 +42,5 @@ class  Train(object) :
 		for i in range(5):
 			while len(self.activity_templates[i]) > minimum_template_num:
 				self.activity_templates[i].pop(0)	
-		print "activity_templates = ",self.activity_templates
+		fh=open("pickled.output","w")
+		pickle.dump(self.activity_templates,fh);

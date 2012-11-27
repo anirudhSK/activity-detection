@@ -7,6 +7,8 @@ from normal import *
 from distributions import *
 import sys
 import operator
+import pickle
+import kinds
 # classify based on traces
 class Classify(object) :
 	''' Windowing primitives '''
@@ -37,9 +39,9 @@ class Classify(object) :
 		sim_phone.change_gsm_interval(max(self.power_gsm.keys()))
 		sim_phone.change_nwk_loc_interval(max(self.power_nwk_loc.keys()))
 		
-		execfile(classifier_model,self.recs) #get activity_templates
-		self.activity_templates = self.recs['activity_templates']
-
+		classifier_model_handle=open(classifier_model,"r");
+		self.activity_templates = pickle.load(classifier_model_handle);
+		
 	def predict_label(self, observed_signal, detection_step = 5):
 		gamma = 1
 		# shifted detection
@@ -66,7 +68,7 @@ class Classify(object) :
 					dists.append(self.dist_func(cur_window, template[i:j]))
 					break
 		# return best match
-		return min(dists)
+		return sys.maxint if dists == [] else min(dists)
 
 	def dist_func(self, cur_window,  segment):
 	
@@ -97,7 +99,7 @@ class Classify(object) :
 		        self.current_window+=[(current_time,accel_mag)]
 			start_time = self.current_window[0][0]
 
-			posterior_prob = []
+			posterior_prob = [kinds.default_float_kind.MIN]*5
 			self.last_print_out=current_time if self.last_print_out == -1 else self.last_print_out
 			if (current_time - self.last_print_out) >= self.WINDOW_IN_MILLI_SECONDS/2.0 :
 				posterior_prob = self.predict_label(self.current_window)
