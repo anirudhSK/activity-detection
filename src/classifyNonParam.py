@@ -8,7 +8,6 @@ from distributions import *
 import sys
 import operator
 import pickle
-import kinds
 # classify based on traces
 class Classify(object) :
 	''' Windowing primitives '''
@@ -99,7 +98,7 @@ class Classify(object) :
 		        self.current_window+=[(current_time,accel_mag)]
 			start_time = self.current_window[0][0]
 
-			posterior_prob = [kinds.default_float_kind.MIN]*5
+			posterior_prob = [sys.float_info.min]*5
 			self.last_print_out=current_time if self.last_print_out == -1 else self.last_print_out
 			if (current_time - self.last_print_out) >= self.WINDOW_IN_MILLI_SECONDS/2.0 :
 				posterior_prob = self.predict_label(self.current_window)
