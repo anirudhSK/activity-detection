@@ -87,7 +87,7 @@ class Classify(object) :
 
 		downsampled_signal=numpy.array(map(lambda x : x[1],downsampled_segment))
 		cur_window_signal=numpy.array(map(lambda x : x[1], cur_window))
-		return sqrt(numpy.sum((downsampled_signal-cur_window_signal)**2))
+		return numpy.linalg.norm(downsampled_signal-cur_window_signal)
 
 	def callback(self,sensor_reading,current_time) :
 		''' Interface to simulator :  Leave final result as (timestamp,output_distribution) pairs in classifier_output '''
