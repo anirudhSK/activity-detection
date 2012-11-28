@@ -1,12 +1,9 @@
 #! /usr/bin/python
 from sensors import *
 from math import *
-from numpy.fft import *
 import numpy
-from normal import *
 from distributions import *
 import sys
-import operator
 import pickle
 # classify based on traces
 class Classify(object) :
@@ -54,7 +51,7 @@ class Classify(object) :
 				angle=numpy.dot(observation,template)/(numpy.linalg.norm(observation)*numpy.linalg.norm(template))
 				dist.append(angle)
 			posterior_prob[i] = numpy.sum([exp(-gamma * d) for d in dist])
-			posterior_prob = map (lambda x : x / sum(posterior_prob),posterior_prob)
+		posterior_prob = map (lambda x : x / sum(posterior_prob),posterior_prob)
 		return posterior_prob
 
 	def mean_and_var(self,value_list) :
@@ -71,13 +68,12 @@ class Classify(object) :
 			accel_mag=sqrt(sensor_reading.accel_x**2+sensor_reading.accel_y**2+sensor_reading.accel_z**2)
 		        self.current_window=filter(lambda x : x[0] >=  current_time - self.WINDOW_IN_MILLI_SECONDS, self.current_window)
 		        self.current_window+=[(current_time,accel_mag)]
-			(mean,variance)=self.mean_and_var(map(lambda x : x[1],self.current_window));
+			(_,variance)=self.mean_and_var(map(lambda x : x[1],self.current_window));
 			self.last_time=current_time if self.last_time == -1 else self.last_time
 			if (current_time - self.last_time)  >= self.WINDOW_SHIFT_IN_MILLI_SECONDS: 
 				self.last_time = current_time
 				self.current_variance_window += [variance]
 			if ( len(self.current_variance_window) == self.WINDOW_TEMPLATE_LENGTH ) :
-				posterior_prob = [0.2]*5
 				posterior_prob = self.predict_label(self.current_variance_window)
 				self.classifier_output.append((current_time, Distribution(5,posterior_prob)))
 				self.current_variance_window=[]

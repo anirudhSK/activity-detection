@@ -2,9 +2,7 @@
 # train based on traces
 from sensors import *
 from math import *
-from numpy.fft import *
 import numpy
-from normal import *
 import sys
 import pickle
 class  Train(object) :
