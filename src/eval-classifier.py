@@ -28,7 +28,6 @@ if __name__ == "__main__" :
 	''' print statistics '''
 	statistics=Stats(sim_phone.gnd_truth,classifier.classifier_output,sampling_rate_vector,power_model)
 	print>>sys.stderr,"Hard match ",statistics.match(match_type='hard')
-	print>>sys.stderr,"Soft match ",statistics.match(match_type='soft')
 	print>>sys.stderr,"Detection latency : \n -----------"
 	statistics.latency_stats()
 	print "Graph data :"
