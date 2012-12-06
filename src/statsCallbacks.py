@@ -95,7 +95,7 @@ class CallbackStats(object) :
 			ml_estimate=current_distribution.mode()
 			bin_index=time_stamp/bin_size
 			if bin_index not in binned_time_series :
-				binned_time_series[bin_index]=[]
+				binned_time_series[bin_index]=[ml_estimate]
 			else :
 				if ml_estimate not in binned_time_series[bin_index] :
 					binned_time_series[bin_index]+=ml_estimate
