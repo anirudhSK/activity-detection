@@ -33,6 +33,8 @@ class Positive_Normal :
 		return "Mean of distribution "+str(self.mean)+" sigma is "+str(self.sigma)
 
 	def pdf(self,x) :
+		if (self.mean == None) :
+			return 0;
 		density=self.phi((x-self.mean)/self.sigma)/self.sigma;
 		norm_constant=1-self.Phi((-self.mean)/self.sigma)
 		return density/norm_constant
