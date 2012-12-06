@@ -35,7 +35,7 @@ class CallbackStats(object) :
 			merged_output_bins = self.merge_not_interested_state(output_bins[current_bin])
 		
 			if  (set(merged_output_bins).issubset(set(merged_gnd_truth_bins))):
-				corrent_bins+=1
+				correct_bins+=1
 			#if (current_bin in output_bins) and (set(output_bins[current_bin]).issubset(set(gnd_truth_bins[current_bin]))) :
 			#	correct_bins+=1
 
