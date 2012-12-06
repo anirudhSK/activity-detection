@@ -26,7 +26,7 @@ class Stats(object) :
 		total_bins=0
 		correct_bins=0
 		for current_bin in gnd_truth_bins :
-			if (current_bin in output_bins) and (set(output_bins[current_bin]).issubset(set(gnd_truth_bins[current_bin]))) :
+			if (current_bin in output_bins) and (set(output_bins[current_bin]).issubset(set(gnd_truth_bins[current_bin]))) and (output_bins[current_bin] != []) :
 				correct_bins+=1
 			total_bins+=1
 		return float(correct_bins) / (total_bins)
