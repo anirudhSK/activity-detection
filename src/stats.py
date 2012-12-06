@@ -73,5 +73,5 @@ class Stats(object) :
 				binned_time_series[bin_index]=[]
 			else :
 				if ml_estimate not in binned_time_series[bin_index] :
-					binned_time_series[bin_index]+=ml_estimate
+					binned_time_series[bin_index]+=[ml_estimate]
 		return binned_time_series
