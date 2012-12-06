@@ -2,6 +2,7 @@
 # class representing phone
 from sensors import *
 from distributions import *
+import sys
 class Phone(object) :
 	''' sampling interval defaults in milliseconds '''
 	accel_interval=1000
@@ -62,12 +63,11 @@ class Phone(object) :
 		self.event_list.sort(key=lambda x : x.time_stamp) 
 		self.current_time=self.event_list[0].time_stamp
 		''' Populate next timestamps '''
-		self.next_accel_timestamp=self.accel_list[0].time_stamp
-		self.next_wifi_timestamp=self.wifi_list[0].time_stamp
-		self.next_gps_timestamp=self.gps_list[0].time_stamp
-		self.next_gsm_timestamp=self.gsm_list[0].time_stamp
-		self.next_nwk_loc_timestamp=self.nwk_loc_list[0].time_stamp
-
+		self.next_accel_timestamp=self.accel_list[0].time_stamp if self.accel_list != [] else sys.float_info.max
+		self.next_wifi_timestamp=self.wifi_list[0].time_stamp if self.wifi_list != [] else sys.float_info.max
+		self.next_gps_timestamp=self.gps_list[0].time_stamp if self.gps_list != [] else sys.float_info.max
+		self.next_gsm_timestamp=self.gsm_list[0].time_stamp if self.gsm_list != [] else sys.float_info.max
+		self.next_nwk_loc_timestamp=self.nwk_loc_list[0].time_stamp if self.nwk_loc_list != [] else sys.float_info.max
 	''' Methods to change sampling interval '''
 	def change_accel_interval(self,accel_interval):
 		if( self.accel_interval == accel_interval ) :
