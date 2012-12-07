@@ -24,5 +24,12 @@ Callback adaptive scheme :
 =================================================
 Callback 1 : 75 % and 1399 Joules
 Callback 2 : 57% and 266 Joules
-Callback 3 : 77 % and 1588 Joules
+Callback on 1,2 : 77 % and 1588 Joules
 Not quite there yet. 
+
+Callback adaptive scheme on 3 hour stitched trace of the same phone (but not the same as the training data): 
+================================================================================================
+Here's how we generated the templates and stitched : ./split-and-stitch.sh ~/cita/io-detector/IO-Data/io-data-Dec6/GalaxyNexus/ 10800000 2
+Callback 1 : 88% and 1499 Joules
+Callback 2:  85% and 1649 Joules 
+Callback 1,2: 97% and 3118 Joules
