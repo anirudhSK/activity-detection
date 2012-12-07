@@ -33,3 +33,15 @@ Here's how we generated the templates and stitched : ./split-and-stitch.sh ~/cit
 Callback 1 : 88% and 1499 Joules
 Callback 2:  85% and 1649 Joules 
 Callback 1,2: 97% and 3118 Joules
+
+Here are averages across 10 runs :
+======================================================
+Train using : anirudh@Sim-Box:~/cita/activity-detection/src$ python train-classifier.py ~/cita/io-detector/IO-Data/io-data-Dec3/Accel-dummy ~/cita/io-detector/IO-Data/io-data-Dec3/Wifi-Lenin ~/cita/io-detector/IO-Data/io-data-Dec3/GPS-dummy ~/cita/io-detector/IO-Data/io-data-Dec3/GSM-Lenin ~/cita/io-detector/IO-Data/io-data-Dec3/NwkLoc-dummy ../hardware-models/sensation/power.py 2&>1 classifier.model
+
+Test using :  ./split-and-stitch.sh ~/cita/io-detector/IO-Data/io-data-Dec6/GalaxyNexus/ 10800000 2
+
+Callback 1 87.6 % 1569.7 Joules
+Callback 2 82%  1403 Joules
+Callback 1,2 : 96 % 3118 Joules
+
+Ramp up at 0.2, no ramp down.
