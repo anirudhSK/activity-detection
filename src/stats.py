@@ -26,10 +26,24 @@ class Stats(object) :
 		total_bins=0
 		correct_bins=0
 		for current_bin in gnd_truth_bins :
-			if (current_bin in output_bins) and (set(output_bins[current_bin]).issubset(set(gnd_truth_bins[current_bin]))) and (output_bins[current_bin] != []) :
-				correct_bins+=1
+			if (current_bin in output_bins) :
+				merged_gnd_truth_bins = self.merge_not_interested_state(gnd_truth_bins[current_bin])
+				merged_output_bins    = self.merge_not_interested_state(output_bins[current_bin])
+				if  (set(merged_output_bins).issubset(set(merged_gnd_truth_bins))) and ( merged_output_bins != [] ) and ( merged_gnd_truth_bins != [] ):
+					correct_bins+=1
 			total_bins+=1
 		return float(correct_bins) / (total_bins)
+	
+	def merge_not_interested_state(self, state_list):
+		useless_state = 5
+		merged_state_list = []
+		for state in state_list:
+			if (state in self.callback_list) and (state not in merged_state_list):
+				merged_state_list.append(state)
+			elif (state not in self.callback_list) and (useless_state not in merged_state_list):
+				merged_state_list.append(useless_state)
+		return merged_state_list
+
 	def latency_stats(self):# compute latency of detection
 		''' find transition points in gnd truth by creating an interval list '''
 		gnd_truth_list=self.interval_list(self.gnd_truth)
