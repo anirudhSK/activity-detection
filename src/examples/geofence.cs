@@ -78,23 +78,33 @@ namespace GeoFencing
                 double wifiDistance = GetNearestGeofenceDistance(dataPoint.WifiLocation, 0.2, geofences, ref minGeofence);
                 double gpsDistance = GetNearestGeofenceDistance(dataPoint.Location, 0, geofences, ref minGeofence);
                 int moveHint = dataPoint.MoveHint;
+                
+                // Get all the geofences I am currently inside
                 HashSet<int> geofencesIndex = GetGeofencesSurrounding(dataPoint.Location, geofences);
 
+		// If you are inside atleast one geofence
                 if (gpsDistance < 0)
                 {
+                    // Iterate through all the geofences I am current inside
                     foreach (int gIndex in geofencesIndex)
                     {
+                    	// If the ground truth does not the geofence 
                         if (!gtCurrentlyInside.Contains(gIndex))
                         {
+                            // Add it to ground truth
                             gtCurrentlyInside.Add(gIndex);
                         }
                     }
                 }
 
+		// This snippet is to remove the geofence from ground truth if I am left any geofence
+		// Iterate through the ground truth geofences
                 foreach (int cIndex in gtCurrentlyInside.ToList())
                 {
+                    // Am I currently inside this geofence
                     if (!geofencesIndex.Contains(cIndex))
                     {
+                    	// If not delete it
                         gtCurrentlyInside.Remove(cIndex);
                     }
                 }
