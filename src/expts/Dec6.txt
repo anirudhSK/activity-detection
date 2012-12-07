@@ -1,38 +1,21 @@
-Indoor Outdoor detection. Train on a Galaxy Nexus and testing on a Nexus One and Galaxy Nexus. Ignore energy numbers.
-
-
+Indoor Outdoor detection. 
+========================================
+Train on a Galaxy Nexus, and test on a Nexus One and Galaxy Nexus.
+------------------------------------------------------------------------- 
 anirudh@Sim-Box:~/cita/activity-detection/src$ python train-classifier.py ~/cita/io-detector/IO-Data/io-data-Dec3/Accel-dummy ~/cita/io-detector/IO-Data/io-data-Dec3/Wifi-Lenin ~/cita/io-detector/IO-Data/io-data-Dec3/GPS-dummy ~/cita/io-detector/IO-Data/io-data-Dec3/GSM-Lenin ~/cita/io-detector/IO-Data/io-data-Dec3/NwkLoc-dummy ../hardware-models/sensation/power.py 2&>1 classifier.model
 
-anirudh@Sim-Box:~/cita/activity-detection/src$ time python eval-classifier.py ~/cita/io-detector/IO-Data/io-data-Dec6-Take2/NexusOne/Accel2012-12-06-11-57-07 ~/cita/io-detector/IO-Data/io-data-Dec6-Take2/NexusOne/Wifi2012-12-06-11-57-07 ~/cita/io-detector/IO-Data/io-data-Dec6-Take2/NexusOne/GPS2012-12-06-11-57-07 ~/cita/io-detector/IO-Data/io-data-Dec6-Take2/NexusOne/GSM2012-12-06-11-57-07 ~/cita/io-detector/IO-Data/io-data-Dec6-Take2/NexusOne/Geo\ Loc2012-12-06-11-57-07  ../hardware-models/sensation/power.py classifier.model 
-Hard match  0.783783783784
-Graph data :
-Energy consumption  95521517.304  Joules 
+Older Scheme : Inverted scheme that gave best results at lowest sampling rate (written below)
+*******************************************************************************
+Results :
+Test on GalaxyNexus Set 2 : 83% 
+Test on GalaxyNexus Set 1 : 86 %
+Test on NexusOne Set 1 : 80 %
+Test on NexusOne Set 2 : 78%
 
-real	0m0.459s
-user	0m0.428s
-sys	0m0.020s
-anirudh@Sim-Box:~/cita/activity-detection/src$ time python eval-classifier.py ~/cita/io-detector/IO-Data/io-data-Dec6-Take2/GalaxyNexus/Accel2012-12-06-11-57-08 ~/cita/io-detector/IO-Data/io-data-Dec6-Take2/GalaxyNexus/Wifi2012-12-06-11-57-08 ~/cita/io-detector/IO-Data/io-data-Dec6-Take2/GalaxyNexus/GPS2012-12-06-11-57-08 ~/cita/io-detector/IO-Data/io-data-Dec6-Take2/GalaxyNexus/GSM2012-12-06-11-57-08 ~/cita/io-detector/IO-Data/io-data-Dec6-Take2/GalaxyNexus/Geo\ Loc2012-12-06-11-57-08  ../hardware-models/sensation/power.py classifier.model 
-Hard match  0.837837837838
-Graph data :
-Energy consumption  95545658.148  Joules 
-
-real	0m1.384s
-user	0m1.208s
-sys	0m0.024s
-anirudh@Sim-Box:~/cita/activity-detection/src$ time python eval-classifier.py ~/cita/io-detector/IO-Data/io-data-Dec6/GalaxyNexus/Accel2012-12-06-08-50-50 ~/cita/io-detector/IO-Data/io-data-Dec6/GalaxyNexus/Wifi2012-12-06-08-50-50 ~/cita/io-detector/IO-Data/io-data-Dec6/GalaxyNexus/GPS2012-12-06-08-50-50 ~/cita/io-detector/IO-Data/io-data-Dec6/GalaxyNexus/GSM2012-12-06-08-50-50 ~/cita/io-detector/IO-Data/io-data-Dec6/GalaxyNexus/Geo\ Loc2012-12-06-08-50-50 ../hardware-models/sensation/power.py classifier.model 
-Hard match  0.864583333333
-Graph data :
-Energy consumption  249380577.912  Joules 
-
-real	0m3.804s
-user	0m3.492s
-sys	0m0.040s
-anirudh@Sim-Box:~/cita/activity-detection/src$ time python eval-classifier.py ~/cita/io-detector/IO-Data/io-data-Dec6/NexusOne/Accel2012-12-06-08-50-46 ~/cita/io-detector/IO-Data/io-data-Dec6/NexusOne/Wifi2012-12-06-08-50-46 ~/cita/io-detector/IO-Data/io-data-Dec6/NexusOne/GPS2012-12-06-08-50-46 ~/cita/io-detector/IO-Data/io-data-Dec6/NexusOne/GSM2012-12-06-08-50-46 ~/cita/io-detector/IO-Data/io-data-Dec6/NexusOne/Geo\ Loc2012-12-06-08-50-46 ../hardware-models/sensation/power.py classifier.model 
-Hard match  0.802083333333
-Graph data :
-Energy consumption  249407592.666  Joules 
-
-real	0m1.487s
-user	0m1.224s
-sys	0m0.044s
-
+New Scheme that achieves more sane energy numbers(as in the higher sampling rate achieves higher accuracy) : ( The commit after 4b8a4810792f29934ab4ca52c85d2c77e3e453f7)
+************************************************************************************************************
+Results :
+Test on GalaxyNexus Set 2 : 88% 
+Test on GalaxyNexus Set 1 : 91 %
+Test on NexusOne Set 1 : 79 %
+Test on NexusOne Set 2 : 78%
