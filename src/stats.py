@@ -7,18 +7,21 @@ class Stats(object) :
 	gnd_truth=[]		# list of time, gnd_truth pairs
 	classifier_output=[]	# list of time, classifier output pairs
 	sampling_intervals=()# 5 tuple of lists each representing one sensor's rate as a fn of time
-	
+	callback_list=[]	
+
 	''' power stats for each phone '''
 	power_accel=dict()
 	power_wifi=dict()
 	power_gps=dict()
 	power_gsm=dict()
 	power_nwk_loc=dict()
-	def __init__ (self,gnd_truth,classifier_output,sensor_sampling_intervals,power_model) :
+	def __init__ (self,gnd_truth,classifier_output,sensor_sampling_intervals,power_model,callback_list) :
 		self.gnd_truth=gnd_truth
 		self.classifier_output=classifier_output
 		self.sampling_intervals=sensor_sampling_intervals
+		self.callback_list=callback_list
 		execfile(power_model)
+
 	def match(self,match_type='hard'):	# compute hard metric between the two lists
 		# compute bins for both lists
 		gnd_truth_bins=self.discretise_time_series(self.gnd_truth)
@@ -57,6 +60,7 @@ class Stats(object) :
 					actual_label=gnd_truth_interval.distribution.mode()
 					print>>sys.stderr,"Activity:",actual_label," starts @ ",gnd_truth_interval.start," Latency: ",latency," ms with ",len(consecutive_outputs)," samples"
 					break;
+
 	def energy_stats(self): # compute energy cost of detection over the entire trace
 		accel_sampling_intervals  =self.sampling_intervals[0]
 		wifi_sampling_intervals   =self.sampling_intervals[1]
@@ -75,6 +79,7 @@ class Stats(object) :
 		for i in range(0,len(nwk_loc_sampling_intervals)-1) :
 			energy+=self.power_nwk_loc[nwk_loc_sampling_intervals[i][1]]*(nwk_loc_sampling_intervals[i+1][0]-nwk_loc_sampling_intervals[i][0])
 		return energy	
+
 	def discretise_time_series(self,time_series,bin_size=60000) :
 		''' Put the classifier output or the gnd truth into bins of bin_size ms each '''
 		binned_time_series=dict()
