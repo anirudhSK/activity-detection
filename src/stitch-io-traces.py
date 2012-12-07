@@ -20,7 +20,7 @@ else :
 			filter(lambda x : isfile(join(outdoor_trace_folder,x)),listdir(outdoor_trace_folder)))
 
 	''' Indices to keep track of which trace file to write next '''
-	indoorindex =0
+	indoor_index =0
 	outdoor_index=0
 
 	random_seed=int(sys.argv[4]);
