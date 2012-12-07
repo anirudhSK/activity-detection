@@ -117,8 +117,8 @@ class Classify(object) :
 	def energy_adapt (self, current_time, power_accel, callback_list, posterior_pmf) :
 			print "Current sampling interval is ",self.current_sampling_interval
 			# check if you can ramp up at all
-			do_i_ramp_up=reduce(lambda acc, update : acc or (posterior_pmf[update] >= 0.2), callback_list ,False); 
-			do_i_ramp_down=reduce(lambda acc, update : acc and (posterior_pmf[update] < 0.2), callback_list ,True); 
+			do_i_ramp_up  =any(posterior_pmf[x] >= 0.2 for x in callback_list)
+			do_i_ramp_down=all(posterior_pmf[x] <  0.2 for x in callback_list) 
 			print "Posterior pmf is ",posterior_pmf," ramp up ", do_i_ramp_up, " ramp down", do_i_ramp_down
 			if (do_i_ramp_up) :
 				try :
