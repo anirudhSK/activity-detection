@@ -19,3 +19,10 @@ Test on GalaxyNexus Set 2 : 88%
 Test on GalaxyNexus Set 1 : 91 %
 Test on NexusOne Set 1 : 79 %
 Test on NexusOne Set 2 : 78%
+
+Callback adaptive scheme :
+=================================================
+Callback 1 : 75 % and 1399 Joules
+Callback 2 : 57% and 266 Joules
+Callback 3 : 77 % and 1588 Joules
+Not quite there yet. 

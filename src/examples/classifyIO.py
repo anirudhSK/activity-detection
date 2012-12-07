@@ -29,20 +29,24 @@ class Classify(object) :
 	power_gsm=dict()
 	power_nwk_loc=dict()
 
+	''' callback list '''
+	callback_list=[]
+
 	''' parameters of distributions used for Naive Bayes prediction '''
 	avg_rssi_dist=[0]*NUM_STATES
 	fraction_aps_dist=[0]*NUM_STATES
 
-	def __init__(self,sim_phone,classifier_model,power_model) :
+	def __init__(self,sim_phone,classifier_model,power_model,callback_list) :
 		self.sim_phone=sim_phone
 		self.classifier_output=[]
+		self.callback_list=callback_list
 
 		execfile(power_model)
 
 		''' set initial sampling intervals to the max value in milliseconds '''
 		self.current_sampling_interval=max(self.power_wifi.keys())
 		sim_phone.change_accel_interval(max(self.power_accel.keys()))
-		sim_phone.change_wifi_interval(min(self.power_wifi.keys()))
+		sim_phone.change_wifi_interval(max(self.power_wifi.keys()))
 		sim_phone.change_gps_interval(max(self.power_gps.keys()))
 		sim_phone.change_gsm_interval(max(self.power_gsm.keys()))
 		sim_phone.change_nwk_loc_interval(max(self.power_nwk_loc.keys()))
@@ -105,14 +109,17 @@ class Classify(object) :
 				rssi_for_prediction=reduce(lambda acc, update : acc +update[1],self.meta_window,0.0)/len(self.meta_window)
 				fraction_for_prediction=reduce(lambda acc, update : acc +update[2],self.meta_window,0.0)/len(self.meta_window)
 				posterior_dist=self.predict_label(rssi_for_prediction,fraction_for_prediction)
-				print "Predicting using ",len(self.meta_window), " elements at time ",current_time, " avg_window_rssi ", rssi_for_prediction, " num aps ", fraction_aps_seen
+				print "Predicting using ",len(self.meta_window), " elements at time ",current_time, " avg_window_rssi ", rssi_for_prediction, " num aps ", fraction_aps_seen, " posterior is ", posterior_dist,
 				self.classifier_output.append((current_time,posterior_dist))
 				self.last_output=current_time
-			#self.energy_adapt(current_time, self.power_accel, [0,1,2], posterior_dist.pmf)
+				self.energy_adapt(current_time, self.power_accel, self.callback_list, posterior_dist.pmf)
+			print "\n"
 	def energy_adapt (self, current_time, power_accel, callback_list, posterior_pmf) :
 			print "Current sampling interval is ",self.current_sampling_interval
 			# check if you can ramp up at all
-			do_i_ramp_up=reduce(lambda acc, update : acc or (posterior_pmf[update] >= 0.4), callback_list ,False); 
+			do_i_ramp_up=reduce(lambda acc, update : acc or (posterior_pmf[update] >= 0.2), callback_list ,False); 
+			do_i_ramp_down=reduce(lambda acc, update : acc and (posterior_pmf[update] < 0.2), callback_list ,True); 
+			print "Posterior pmf is ",posterior_pmf," ramp up ", do_i_ramp_up, " ramp down", do_i_ramp_down
 			if (do_i_ramp_up) :
 				try :
 					self.current_sampling_interval=max(filter(lambda x : x < self.current_sampling_interval, self.power_wifi.keys()))
@@ -120,3 +127,9 @@ class Classify(object) :
 					self.current_sampling_interval=self.current_sampling_interval
 				self.sim_phone.change_wifi_interval(self.current_sampling_interval)
 				return
+			if (do_i_ramp_down) :
+				try :
+					self.current_sampling_interval=min(filter(lambda x : x > self.current_sampling_interval, self.power_wifi.keys()))
+				except Exception :
+					self.current_sampling_interval=self.current_sampling_interval
+				self.sim_phone.change_wifi_interval(self.current_sampling_interval)
