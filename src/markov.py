@@ -4,9 +4,9 @@ from random import *
 from math import *
 class MarkovChain(object) :
 	states=[] 		# list of states id'ed by name
-	def __init__ (self,num) :
+	def __init__ (self,num,states) :
 		seed(num)	
-		self.states=['static','walking','running','biking','driving']
+		self.states=states
 	def simulate(self,duration) :
 		time=0;
 		''' initially, pick state with a uniform prior '''

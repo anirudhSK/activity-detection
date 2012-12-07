@@ -36,7 +36,7 @@ else :
 	driving_index=0
 
 	random_seed=int(sys.argv[7]);
-	m=MarkovChain(random_seed)
+	m=MarkovChain(random_seed,['static','walking','running','biking','driving'])
 	sampled_dtmc=m.simulate(duration);
 	for i in range(0,len(sampled_dtmc)) :
 		current=sampled_dtmc[i]

@@ -24,7 +24,7 @@ else :
 	outdoor_index=0
 
 	random_seed=int(sys.argv[4]);
-	m=MarkovChain(random_seed)
+	m=MarkovChain(random_seed,['indoor','outdoor'])
 	sampled_dtmc=m.simulate(duration);
 	for i in range(0,len(sampled_dtmc)) :
 		current=sampled_dtmc[i]
