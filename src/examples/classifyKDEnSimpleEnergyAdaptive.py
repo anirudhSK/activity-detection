@@ -85,10 +85,10 @@ class KernelSimpleEnergyClassify(object) :
 			if callback == 0 or callback == 3 or callback == 4:
 				hard_act_counter += 1
 
-		if hard_act_counter == 1:
-			self.use_wifi = 1
-		elif hard_act_counter > 1:
-			self.use_gps = 1
+	#	if hard_act_counter == 1:
+	#		self.use_wifi = 1
+	#	if hard_act_counter >= 1:
+		self.use_gps = 1
 
 		''' set initial sampling intervals in milliseconds '''
 		execfile(power_model)
@@ -250,13 +250,11 @@ class KernelSimpleEnergyClassify(object) :
 
 			distance =  self.compute_geo_distance(coord_1,coord_2)	
 			
-			 
 			total_distance += distance
 
-		time_diff = (set_of_gps_points[-1].time_stamp -set_of_gps_points[0].time_stamp)/1000.0
 		ave_speed = total_distance /((set_of_gps_points[-1].time_stamp -set_of_gps_points[0].time_stamp)/1000.0)
 		
-		print "GPS ave speed", ave_speed, "total distance", total_distance, "time diff", time_diff
+		print "GPS ave speed", ave_speed, "total distance", total_distance
 			
 		if total_distance > 4500 * 2 : # this guy is crazy
 
@@ -423,26 +421,30 @@ class KernelSimpleEnergyClassify(object) :
 					final_posterior_pmf = combined_posterior_pmf	
 			
 			if (self.use_gps == 1):
-			#	if should_i_trust_gps == 1 and (gps_posterior_dist.mode() == 0 or gps_posterior_dist.mode() == 4): 	
-				if max(gps_posterior_dist.pmf) > 0.5: 	
-					final_posterior_pmf = gps_posterior_dist.pmf	
-					print "Prediction from gps(sole)", gps_posterior_dist
-				else:
-					
-					combined_posterior_pmf = [0]*5
-					for i in range(5):
-						#combined_posterior_pmf[i] = accel_posterior_dist.pmf[i] * gps_posterior_dist.pmf[i]
-						combined_posterior_pmf[i] = accel_likelihood[i] * gps_posterior_dist.pmf[i]
+				if should_i_trust_gps == 1: 
+					if (gps_posterior_dist.mode() == 0 or gps_posterior_dist.mode() == 4): 	
+				#if max(gps_posterior_dist.pmf) > 0.8: 	
+						final_posterior_pmf = gps_posterior_dist.pmf	
+						print "Prediction from gps(sole)", gps_posterior_dist
+					else:	
+						combined_posterior_pmf = [0]*5
+						for i in range(1,4):
+							#combined_posterior_pmf[i] = accel_posterior_dist.pmf[i] * gps_posterior_dist.pmf[i]
+							combined_posterior_pmf[i] = accel_posterior_dist.pmf[i] * gps_posterior_dist.pmf[i]
 				
-					for label in range(5) :
-						if sum(combined_posterior_pmf) > 0:
-							combined_posterior_pmf[label]=combined_posterior_pmf[label]/sum(combined_posterior_pmf)
+						for label in range(5) :
+							if sum(combined_posterior_pmf) > 0:
+								combined_posterior_pmf[label]=combined_posterior_pmf[label]/sum(combined_posterior_pmf)
 
-					print "gps+accel combined", combined_posterior_pmf
-					final_posterior_pmf = combined_posterior_pmf	
-					print "Prediction from accel(ref)", accel_posterior_dist
+						print "Prediction from accel(ref)", accel_posterior_dist
+						print "gps+accel combined", combined_posterior_pmf
+						#final_posterior_pmf = gps_posterior_dist.pmf	
+						final_posterior_pmf = combined_posterior_pmf	
+				else:
+					final_posterior_pmf = accel_posterior_dist.pmf
 
-	
+			
+
 			if (self.use_gps == 0 and self.use_wifi == 0):
 					
 					#final_posterior_pmf = accel_posterior_dist.pmf	
@@ -453,11 +455,12 @@ class KernelSimpleEnergyClassify(object) :
 
 		
 			final_posterior_dist = Distribution(5,final_posterior_pmf)
-			print "Final posterior dist", final_posterior_dist
+			print "++++gnd_truth++++", sensor_reading.gnd_truth
+			print "++++Final posterior dist++++", final_posterior_dist
 			#self.classifier_output.append((current_time,final_posterior_dist))
 			## EWMA
 			current_prediction = final_posterior_dist.mode()
-			ALPHA = 0.3
+			ALPHA = 0.2
 			Yt = [0]*5
 			Yt[current_prediction] = 1
 			for i in range(5):
@@ -600,7 +603,7 @@ class KernelSimpleEnergyClassify(object) :
 				self.current_accel_fv+=[(current_time,mean,sigma,peak_freq,sigma_valley+sigma_summit)]
 				
 				#posterior_dist=self.predict_label_with_wifi_hint(mean,sigma,peak_freq,sigma_valley+sigma_summit, self.must_be_driving, self.must_be_static)
-				print "gnd_truth", sensor_reading.gnd_truth
+				#print "gnd_truth", sensor_reading.gnd_truth
 				print "Posterior", posterior_dist
 				#self.classifier_output.append((current_time,posterior_dist))
 				# Arbitrary values for unit test :
@@ -626,7 +629,7 @@ class KernelSimpleEnergyClassify(object) :
 	def simple_energy_adapt(self, current_time, power_accel, callback_list, posterior_pmf):
 			''' Vary sampling rate if confidence > 0.2'''
 			self.energy_consumed += (current_time-self.last_energy_update) * power_accel[self.current_sampling_interval]
-			print "Current sampling interval is ",self.current_sampling_interval
+			#print "Current sampling interval is ",self.current_sampling_interval
 			
 			#ramp up if required
 			#do_i_ramp_up=reduce(lambda acc, update : acc or ((posterior_pmf[update] >= 0.2) and (posterior_pmf[update]<=0.8)), callback_list ,False); 
