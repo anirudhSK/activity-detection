@@ -64,3 +64,9 @@ anirudh@Sim-Box:~/cita/activity-detection/src/results$ cat io-detector-0.01-trun
 [1,2] 	 95.0 0.5 1751  0 
 [1] 	 86.2 0.7 1125  44 
 [2] 	 85.4 0.9 1085  39 
+
+====================================
+Final set of results for the paper, using the correct phone model (i.e. the Galaxy Nexus Phone model instead of sensation)
+[1, 	 96.3 0.5 4796  0 
+[1] 	 87.7 1.1 2487  161 
+[2] 	 82.7 1.4 2240  135
