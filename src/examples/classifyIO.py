@@ -11,12 +11,12 @@ import operator
 # classify based on traces
 class Classify(object) :
 	''' Windowing primitives '''
-	WINDOW_IN_MILLI_SECONDS=10000
+	micro_win_in_ms=30000
 	current_window=[]
 	NUM_STATES=3
 
 	meta_window=[]
-	META_WINDOW_INTERVAL=20000 
+	META_WINDOW_INTERVAL=60000 
 	last_output=0
 	last_feature_vector=0
 	''' Energy adapataion '''
@@ -36,17 +36,19 @@ class Classify(object) :
 	avg_rssi_dist=[0]*NUM_STATES
 	fraction_aps_dist=[0]*NUM_STATES
 
-	def __init__(self,sim_phone,classifier_model,power_model,callback_list) :
+	def __init__(self,sim_phone,classifier_model,power_model,callback_list, user_req_latency) :
 		self.sim_phone=sim_phone
 		self.classifier_output=[]
 		self.callback_list=callback_list
-
+                self.user_req_latency=user_req_latency;
+                self.macro_win_in_ms=self.user_req_latency; 
+                self.micro_win_in_ms=self.user_req_latency/2;
+		sim_phone.change_wifi_interval(self.user_req_latency/4)
 		execfile(power_model)
 
 		''' set initial sampling intervals to the max value in milliseconds '''
 		self.current_sampling_interval=max(self.power_wifi.keys())
 		sim_phone.change_accel_interval(max(self.power_accel.keys()))
-		sim_phone.change_wifi_interval(max(self.power_wifi.keys()))
 		sim_phone.change_gps_interval(max(self.power_gps.keys()))
 		sim_phone.change_gsm_interval(max(self.power_gsm.keys()))
 		sim_phone.change_nwk_loc_interval(max(self.power_nwk_loc.keys()))
@@ -69,7 +71,7 @@ class Classify(object) :
 			# zip aps and rssis into one list
 			ap_rssis=zip(sensor_reading.ap_list,sensor_reading.rssi_list);
 			self.current_window+=[(sensor_reading.time_stamp,ap_rssis)]
-			self.current_window=filter(lambda x : x[0] >=  current_time - self.WINDOW_IN_MILLI_SECONDS,self.current_window) # slide window
+			self.current_window=filter(lambda x : x[0] >=  current_time - self.micro_win_in_ms,self.current_window) # slide window
 
 			''' MICRO WINDOW PROCESSING '''
 			# calc. num of aps in window :
@@ -96,20 +98,19 @@ class Classify(object) :
 			fraction_aps_seen=(good_aps_seen*1.0)/aps_seen
 
 			''' MACRO WINDOW PROCESSING, slide by 5 seconds ''' 
-			if (current_time >= self.last_feature_vector + self.WINDOW_IN_MILLI_SECONDS) :
+			if (current_time >= self.last_feature_vector + self.micro_win_in_ms) :
 				''' to add only uncorrelated feature vectors '''
 				self.meta_window += [(current_time,avg_window_rssi,fraction_aps_seen)]
 				self.last_feature_vector=current_time
 			
 			''' expire old items in the MACRO window '''
-			self.meta_window=filter(lambda x : x[0] >=  current_time - self.META_WINDOW_INTERVAL,self.meta_window)
+			self.meta_window=filter(lambda x : x[0] >=  current_time - self.macro_win_in_ms,self.meta_window)
 
 			''' predict now '''
-			if current_time >= self.last_output + self.META_WINDOW_INTERVAL :
+			if current_time >= self.last_output + self.macro_win_in_ms :
 				rssi_for_prediction=reduce(lambda acc, update : acc +update[1],self.meta_window,0.0)/len(self.meta_window)
 				fraction_for_prediction=reduce(lambda acc, update : acc +update[2],self.meta_window,0.0)/len(self.meta_window)
 				posterior_dist=self.predict_label(rssi_for_prediction,fraction_for_prediction)
-				print "Predicting using ",len(self.meta_window), " elements at time ",current_time, " avg_window_rssi ", rssi_for_prediction, " num aps ", fraction_aps_seen, " posterior is ", posterior_dist,
+				print "Predicting using ",len(self.meta_window), " elements at time ",current_time, " avg_window_rssi ", rssi_for_prediction, " num aps ", fraction_aps_seen, " posterior is ", posterior_dist
 				self.classifier_output.append((current_time,posterior_dist))
 				self.last_output=current_time
-			print "\n"
