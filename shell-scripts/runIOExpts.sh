@@ -14,8 +14,6 @@ while [ $i -lt 10 ] ; do
 	echo "seed $i"
 	./split-and-stitch.sh ~/cita/io-detector/IO-Data/io-data-Dec6/GalaxyNexus/ 10800000 $i	> /dev/null
 	cd ~/cita/activity-detection/src
-	time python eval-classifier.py ../utils/stitched-Accel.out ../utils/stitched-Wifi.out ../utils/stitched-GPS.out ../utils/stitched-GSM.out ../utils/stitched-GeoLoc.out ../hardware-model/galaxy/power.py galaxy.model 1 > /dev/null 2>> /tmp/io-results.txt
-	time python eval-classifier.py ../utils/stitched-Accel.out ../utils/stitched-Wifi.out ../utils/stitched-GPS.out ../utils/stitched-GSM.out ../utils/stitched-GeoLoc.out ../hardware-model/galaxy/power.py galaxy.model 2 > /dev/null 2>> /tmp/io-results.txt
 	time python eval-classifier.py ../utils/stitched-Accel.out ../utils/stitched-Wifi.out ../utils/stitched-GPS.out ../utils/stitched-GSM.out ../utils/stitched-GeoLoc.out ../hardware-model/galaxy/power.py galaxy.model both > /dev/null 2>> /tmp/io-results.txt
 	i=`expr $i '+' 1`
 done
