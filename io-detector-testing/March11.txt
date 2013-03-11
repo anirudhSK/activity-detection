@@ -1,0 +1,6 @@
+Workflow for IO-Detector evaluation :
+
+Run :
+~/cita/activity-detection/shell-scripts/runIOExpts.sh and change things there manually.
+
+Was able to replicate results from the last time that I ran this (Dec 2012).
