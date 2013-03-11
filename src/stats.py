@@ -3,6 +3,9 @@
 from interval import *
 from distributions import *
 import sys
+from bisect import *
+import copy
+
 class Stats(object) :
 	gnd_truth=[]		# list of time, gnd_truth pairs
 	classifier_output=[]	# list of time, classifier output pairs
@@ -15,17 +18,18 @@ class Stats(object) :
 	power_gps=dict()
 	power_gsm=dict()
 	power_nwk_loc=dict()
-	def __init__ (self,gnd_truth,classifier_output,sensor_sampling_intervals,power_model,callback_list) :
+	def __init__ (self,gnd_truth,classifier_output,sensor_sampling_intervals,power_model,callback_list, user_requested_latency) :
 		self.gnd_truth=gnd_truth
 		self.classifier_output=classifier_output
 		self.sampling_intervals=sensor_sampling_intervals
 		self.callback_list=callback_list
+                self.eval_latency=user_requested_latency
 		execfile(power_model)
 
 	def match(self,match_type='hard'):	# compute hard metric between the two lists
 		# compute bins for both lists
-		gnd_truth_bins=self.discretise_time_series(self.gnd_truth)
-		output_bins   =self.discretise_time_series(self.classifier_output)
+		gnd_truth_bins=self.discretise_time_series(self.gnd_truth,self.eval_latency)
+		output_bins   =self.discretise_time_series(self.classifier_output,self.eval_latency)
 		total_bins=0
 		correct_bins=0
 		for current_bin in gnd_truth_bins :
@@ -71,7 +75,7 @@ class Stats(object) :
 		for i in range(0,len(accel_sampling_intervals)-1) :
 			energy+=self.power_accel[accel_sampling_intervals[i][1]]*(accel_sampling_intervals[i+1][0]-accel_sampling_intervals[i][0])
 		for i in range(0,len(wifi_sampling_intervals)-1) :
-			energy+=self.power_wifi[wifi_sampling_intervals[i][1]]*(wifi_sampling_intervals[i+1][0]-wifi_sampling_intervals[i][0])
+			energy+=self.get_wifi_power(wifi_sampling_intervals[i][1])*(wifi_sampling_intervals[i+1][0]-wifi_sampling_intervals[i][0])
 		for i in range(0,len(gps_sampling_intervals)-1) :
 			energy+=self.power_gps[gps_sampling_intervals[i][1]]*(gps_sampling_intervals[i+1][0]-gps_sampling_intervals[i][0])
 		for i in range(0,len(gsm_sampling_intervals)-1) :
@@ -80,7 +84,7 @@ class Stats(object) :
 			energy+=self.power_nwk_loc[nwk_loc_sampling_intervals[i][1]]*(nwk_loc_sampling_intervals[i+1][0]-nwk_loc_sampling_intervals[i][0])
 		return energy	
 
-	def discretise_time_series(self,time_series,bin_size=60000) :
+	def discretise_time_series(self,time_series,bin_size) :
 		''' Put the classifier output or the gnd truth into bins of bin_size ms each '''
 		binned_time_series=dict()
 		for pair in time_series :
@@ -94,3 +98,38 @@ class Stats(object) :
 				if ml_estimate not in binned_time_series[bin_index] :
 					binned_time_series[bin_index]+=[ml_estimate]
 		return binned_time_series
+
+        def get_wifi_power( self, sampling_interval ) :
+                if (sampling_interval in self.power_wifi) :
+                        return self.power_wifi[sampling_interval];
+                else :
+                        # find two points to interpolate.
+                        available_intervals=copy.copy(self.power_wifi.keys())
+
+                        # sort keys
+                        available_intervals.sort()
+
+                        # find right most value less than x
+                        lower_end=self.find_lt(available_intervals, sampling_interval)
+                        # find left most value greater than x
+                        higher_end=self.find_gt(available_intervals, sampling_interval);
+                        # Compute slope
+                        ydelta = (self.power_wifi[higher_end]-self.power_wifi[lower_end])
+                        xdelta = higher_end-lower_end;
+                        slope  = ydelta/float(xdelta);
+                        # interpolate
+                        return (slope*(sampling_interval-lower_end)+self.power_wifi[lower_end]);
+
+        def find_lt(self, a, x):
+                'Find rightmost value less than x'
+                i = bisect_left(a, x)
+                if i:
+                         return a[i-1]
+                raise ValueError
+
+        def find_gt(self, a, x):
+                'Find leftmost value greater than x'
+                i = bisect_right(a, x)
+                if i != len(a):
+                         return a[i]
+                raise ValueError
