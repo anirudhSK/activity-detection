@@ -218,6 +218,8 @@ class Phone(object) :
 			result=self.subsample(current_event);
 			pmf=[0]*5 	# probability dist of ground truth
 			pmf[current_event.gnd_truth]=1
+			if (current_event.gnd_truth==0) : 
+				continue; # ignore unknown here
 			self.gnd_truth+=[(current_event.time_stamp,Distribution(len(pmf),pmf))];
 			if (result) :
 				''' call back classifier '''
