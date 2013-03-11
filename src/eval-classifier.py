@@ -8,7 +8,7 @@ from phone import *
 from stats import *
 if __name__ == "__main__" :
 	if ( len(sys.argv) < 9 ) :
-		print "Usage: ",sys.argv[0]," accel_trace wifi_trace gps_trace gsm_trace nwk_loc_trace power_model classifier_model energy_budget(Joules) time_limit(milliseconds) mode "
+		print "Usage: ",sys.argv[0]," accel_trace wifi_trace gps_trace gsm_trace nwk_loc_trace power_model classifier_model energy_budget(Joules) time_limit(milliseconds) latency "
 		exit(5)
 	accel_trace=sys.argv[1]
 	wifi_trace=sys.argv[2]
@@ -20,19 +20,14 @@ if __name__ == "__main__" :
 	''' Initialize phone object '''
 	sim_phone=Phone(accel_trace,wifi_trace,gps_trace,gsm_trace,nwk_loc_trace)
 	''' Initialize classifier object '''
-	mode=sys.argv[8]
-	if (mode =="1") :
-		callback_list=[1]
-	elif (mode == "2" ):
-		callback_list=[2]
-	elif (mode == "both" ) :
-		callback_list=[1,2]
+	user_req_latency=int(sys.argv[8])
+	callback_list=[1,2]
 	print>>sys.stderr,"Callbacks are ",callback_list
-	classifier=Classify(sim_phone,classifier_model,power_model,callback_list)
+	classifier=Classify(sim_phone,classifier_model,power_model,callback_list,user_req_latency)
 	''' run classifier on phone '''
 	sampling_rate_vector=sim_phone.run_classifier(classifier)
 	''' print statistics '''
-	statistics=Stats(sim_phone.gnd_truth,classifier.classifier_output,sampling_rate_vector,power_model,callback_list)
+	statistics=Stats(sim_phone.gnd_truth,classifier.classifier_output,sampling_rate_vector,power_model,callback_list,user_req_latency)
 	print>>sys.stderr,"Hard match ",statistics.match(match_type='hard')
 	print "Graph data :"
 	fh=open("classifier.plot","w");
