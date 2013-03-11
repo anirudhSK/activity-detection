@@ -53,3 +53,17 @@ USer requested latency : 50 seconds, Macro : 50 seconds, Micro : 30 seconds, sam
 [1,2]    78.1 1.1 1261  0
 USer requested latency : 60 seconds, Macro : 60 seconds, Micro : 30 seconds, sampling rate : 20 seconds
 [1,2]    89.3 1.1 1261  0
+
+==============AUTOMATED RUNS WITH INTERPOLATION===============
+Latency :10000
+[1,2]          83.3 1.0 4090  0 
+Latency :20000
+[1,2]          86.9 1.1 2645  0 
+Latency :30000
+[1,2]          88.9 1.0 2186  0 
+Latency :40000
+[1,2]          90.4 1.3 1726  0 
+Latency :50000
+[1,2]          90.3 1.0 1610  0 
+Latency :60000
+[1,2]          91.9 1.3 1494  0
