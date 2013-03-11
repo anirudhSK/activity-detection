@@ -11,12 +11,12 @@ import operator
 # classify based on traces
 class Classify(object) :
 	''' Windowing primitives '''
-	WINDOW_IN_MILLI_SECONDS=5000
+	WINDOW_IN_MILLI_SECONDS=10000
 	current_window=[]
 	NUM_STATES=3
 
 	meta_window=[]
-	META_WINDOW_INTERVAL=60000 
+	META_WINDOW_INTERVAL=20000 
 	last_output=0
 	last_feature_vector=0
 	''' Energy adapataion '''
@@ -112,24 +112,4 @@ class Classify(object) :
 				print "Predicting using ",len(self.meta_window), " elements at time ",current_time, " avg_window_rssi ", rssi_for_prediction, " num aps ", fraction_aps_seen, " posterior is ", posterior_dist,
 				self.classifier_output.append((current_time,posterior_dist))
 				self.last_output=current_time
-				self.energy_adapt(current_time, self.power_accel, self.callback_list, posterior_dist.pmf)
 			print "\n"
-	def energy_adapt (self, current_time, power_accel, callback_list, posterior_pmf) :
-			print "Current sampling interval is ",self.current_sampling_interval
-			# check if you can ramp up at all
-			do_i_ramp_up  =any(posterior_pmf[x] >= 0.2 for x in callback_list)
-			do_i_ramp_down=all(posterior_pmf[x] <  0.2 for x in callback_list) 
-			print "Posterior pmf is ",posterior_pmf," ramp up ", do_i_ramp_up, " ramp down", do_i_ramp_down
-			if (do_i_ramp_up) :
-				try :
-					self.current_sampling_interval=max(filter(lambda x : x < self.current_sampling_interval, self.power_wifi.keys()))
-				except Exception :
-					self.current_sampling_interval=self.current_sampling_interval
-				self.sim_phone.change_wifi_interval(self.current_sampling_interval)
-				return
-			if (do_i_ramp_down) :
-				try :
-					self.current_sampling_interval=min(filter(lambda x : x > self.current_sampling_interval, self.power_wifi.keys()))
-				except Exception :
-					self.current_sampling_interval=self.current_sampling_interval
-				self.sim_phone.change_wifi_interval(self.current_sampling_interval)
