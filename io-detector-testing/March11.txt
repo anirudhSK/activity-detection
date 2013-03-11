@@ -4,3 +4,33 @@ Run :
 ~/cita/activity-detection/shell-scripts/runIOExpts.sh and change things there manually.
 
 Was able to replicate results from the last time that I ran this (Dec 2012).
+
+New results :
+=====================================================================
+Allow WiFi scans to go from 5 seconds all the way to 60 seconds, but no more or less.
+More : Hits accuracy.
+Less : Hits energy.
+
+[1,2]    95.0 0.9 2588  0 
+[1]      86.1 2.3 1646  131 
+[2]      82.8 2.3 1536  113 
+
+Next algorithm :
+Allow WiFi scans to go from 10 seconds all the way to 60 seconds, but no more or less :
+
+[1,2]    94.1 0.9 1705  0 
+[1]      85.8 2.1 1285  62 
+[2]      81.2 2.2 1227  52
+
+Next algorithm :
+I think a simple fixed sampling rate of 20 seconds will work well enough.
+
+[1,2]    90.9 0.8 1261  0 
+[1]      90.9 0.8 1261  0 
+[2]      90.9 0.8 1261  0 
+
+Current algorithm :
+Avg RSSI and Fraction APs above threshold. Train on the Dec 3rd data and test on Dec 6th data from another phone.
+No upper or lower watermark of 0.2.
+Vary sampling rate according to user's latency specification.
+Don't do anything based on the callback specification, because there are only two callbacks.
