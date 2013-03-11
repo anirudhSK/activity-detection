@@ -34,3 +34,22 @@ Avg RSSI and Fraction APs above threshold. Train on the Dec 3rd data and test on
 No upper or lower watermark of 0.2.
 Vary sampling rate according to user's latency specification.
 Don't do anything based on the callback specification, because there are only two callbacks.
+
+Fleshing out the details :
+1. Set Sampling interval to one-fourth of user requested latency.
+2. Set Micro window size to approx. one-half of user requested latency.
+3. Set Macro window size to approx. user requested latency.
+4. Set bin size in stats.py to the user requested latency.
+5. No adaptation based on callbacks or detected user state.
+User requested latency : 10 seconds, Macro : 10 seconds, Micro : 5 seconds, sampling rate : 1 second
+[1,2]    87.2 1.0 4957  0
+User requested latency : 20 seconds, Macro : 20 seconds, Micro : 10 seconds, sampling rate : 5 seconds
+[1,2]    86.9 1.1 2645  0
+User requested latency : 30 seconds, Macro : 30 seconds, Micro : 20 seconds, sampling rate : 10 seconds
+[1,2]    88.3 1.1 1726  0
+User requested latency : 40 seconds, Macro : 40 seconds, Micro : 20 seconds, sampling rate : 10 seconds
+[1,2]    90.4 1.3 1726  0
+USer requested latency : 50 seconds, Macro : 50 seconds, Micro : 30 seconds, sampling rate : 20 seconds
+[1,2]    78.1 1.1 1261  0
+USer requested latency : 60 seconds, Macro : 60 seconds, Micro : 30 seconds, sampling rate : 20 seconds
+[1,2]    89.3 1.1 1261  0
