@@ -3,12 +3,12 @@
     Use traces of arbitrary length to test the classifier.
 '''
 import sys
-from classify import *
+from classifyIO import *
 from phone import *
 from stats import *
 if __name__ == "__main__" :
-	if ( len(sys.argv) < 10 ) :
-		print "Usage: ",sys.argv[0]," accel_trace wifi_trace gps_trace gsm_trace nwk_loc_trace power_model classifier_model energy_budget(Joules) time_limit(milliseconds) "
+	if ( len(sys.argv) < 9 ) :
+		print "Usage: ",sys.argv[0]," accel_trace wifi_trace gps_trace gsm_trace nwk_loc_trace power_model classifier_model energy_budget(Joules) time_limit(milliseconds) mode "
 		exit(5)
 	accel_trace=sys.argv[1]
 	wifi_trace=sys.argv[2]
@@ -17,19 +17,23 @@ if __name__ == "__main__" :
 	nwk_loc_trace=sys.argv[5]
 	power_model=sys.argv[6]
 	classifier_model=sys.argv[7]
-	energy_budget=float(sys.argv[8])
-	time_limit=int(sys.argv[9])
 	''' Initialize phone object '''
 	sim_phone=Phone(accel_trace,wifi_trace,gps_trace,gsm_trace,nwk_loc_trace)
 	''' Initialize classifier object '''
-	classifier=Classify(sim_phone,classifier_model,power_model,energy_budget,time_limit)
+	mode=sys.argv[8]
+	if (mode =="1") :
+		callback_list=[1]
+	elif (mode == "2" ):
+		callback_list=[2]
+	elif (mode == "both" ) :
+		callback_list=[1,2]
+	print>>sys.stderr,"Callbacks are ",callback_list
+	classifier=Classify(sim_phone,classifier_model,power_model,callback_list)
 	''' run classifier on phone '''
 	sampling_rate_vector=sim_phone.run_classifier(classifier)
 	''' print statistics '''
-	statistics=Stats(sim_phone.gnd_truth,classifier.classifier_output,sampling_rate_vector,power_model)
+	statistics=Stats(sim_phone.gnd_truth,classifier.classifier_output,sampling_rate_vector,power_model,callback_list)
 	print>>sys.stderr,"Hard match ",statistics.match(match_type='hard')
-	print>>sys.stderr,"Detection latency : \n -----------"
-	statistics.latency_stats()
 	print "Graph data :"
 	fh=open("classifier.plot","w");
 	for output in classifier.classifier_output :
