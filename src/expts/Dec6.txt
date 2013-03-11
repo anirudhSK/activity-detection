@@ -36,7 +36,7 @@ Callback 1,2: 97% and 3118 Joules
 
 Here are averages across 10 runs :
 ======================================================
-Train using : anirudh@Sim-Box:~/cita/activity-detection/src$ python train-classifier.py ~/cita/io-detector/IO-Data/io-data-Dec3/Accel-dummy ~/cita/io-detector/IO-Data/io-data-Dec3/Wifi-Lenin ~/cita/io-detector/IO-Data/io-data-Dec3/GPS-dummy ~/cita/io-detector/IO-Data/io-data-Dec3/GSM-Lenin ~/cita/io-detector/IO-Data/io-data-Dec3/NwkLoc-dummy ../hardware-models/sensation/power.py 2&>1 classifier.model
+Train using : anirudh@Sim-Box:~/cita/activity-detection/src$ python train-classifier.py ~/cita/io-detector/IO-Data/io-data-Dec3/Accel-dummy ~/cita/io-detector/IO-Data/io-data-Dec3/Wifi-Lenin ~/cita/io-detector/IO-Data/io-data-Dec3/GPS-dummy ~/cita/io-detector/IO-Data/io-data-Dec3/GSM-Lenin ~/cita/io-detector/IO-Data/io-data-Dec3/NwkLoc-dummy ../hardware-model/sensation/power.py 2&>1 classifier.model
 
 Test using :  ./split-and-stitch.sh ~/cita/io-detector/IO-Data/io-data-Dec6/GalaxyNexus/ 10800000 2
 
@@ -67,6 +67,6 @@ anirudh@Sim-Box:~/cita/activity-detection/src/results$ cat io-detector-0.01-trun
 
 ====================================
 Final set of results for the paper, using the correct phone model (i.e. the Galaxy Nexus Phone model instead of sensation)
-[1, 	 96.3 0.5 4796  0 
+[1,2] 	 96.3 0.5 4796  0 
 [1] 	 87.7 1.1 2487  161 
 [2] 	 82.7 1.4 2240  135
